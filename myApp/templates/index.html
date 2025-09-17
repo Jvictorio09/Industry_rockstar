@@ -1,43 +1,76 @@
 {% extends "base.html" %}
-{% block title %}Industry Rockstar | Payments{% endblock %}
+{% block title %}Katalyst | Payments{% endblock %}
 
 {% block content %}
-<section class="bg-gradient-to-r from-[#0a0f2c] to-[#7b2cbf] text-white">
-  <div class="max-w-5xl mx-auto px-6 py-20 text-center space-y-10">
-    
-    <!-- Main company logo -->
-    <div class="flex justify-center mb-6">
-      <img src="https://rkstr.willcox.tech/wp-content/uploads/2025/07/industry-rockstar-logo.png" 
-           alt="Industry Rockstar" class="h-16">
+<section class="bg-gradient-to-b from-white to-gray-50">
+  <div class="max-w-6xl mx-auto px-4 py-16 grid lg:grid-cols-2 gap-10 items-center">
+    <!-- Copy -->
+    <div>
+      <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-sky-600 mb-3">
+        <span class="h-1.5 w-1.5 rounded-full bg-sky-600"></span> Payments Integration
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-4">
+        Fast, secure donations & payments for <span class="text-sky-600">Katalyst</span>
+      </h1>
+      <p class="text-gray-600 text-lg mb-8">
+        A lightweight, secure portal for processing contributions and program payments—optimized for Stripe, built with Django & Tailwind.
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="{% url 'donation_widget' %}"
+           class="inline-flex items-center gap-2 bg-sky-600 text-white px-6 py-3 rounded-xl hover:bg-sky-700 shadow-sm">
+          Donate to Solutions for Change
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+          </svg>
+        </a>
+        <a href="https://katalyst-crm.com/" target="_blank"
+           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-300 hover:bg-gray-100">
+          Learn more at https://katalyst-crm.com/
+        </a>
+      </div>
+
+      <div class="mt-10 grid sm:grid-cols-3 gap-4 text-sm">
+        <div class="bg-white border rounded-xl p-4">
+          <p class="font-semibold">Stripe Checkout</p>
+          <p class="text-gray-500 mt-1">PCI SAQ-A compliant</p>
+        </div>
+        <div class="bg-white border rounded-xl p-4">
+          <p class="font-semibold">Recurring & one-time</p>
+          <p class="text-gray-500 mt-1">Monthly / quarterly / yearly</p>
+        </div>
+        <div class="bg-white border rounded-xl p-4">
+          <p class="font-semibold">Embed anywhere</p>
+          <p class="text-gray-500 mt-1">Iframe-ready widget</p>
+        </div>
+      </div>
     </div>
 
-    <h1 class="text-4xl sm:text-5xl font-bold leading-tight">
-      Fast, secure payments for <span class="text-pink-500">Industry Rockstar</span>
-    </h1>
-    <p class="text-lg text-gray-200 max-w-2xl mx-auto">
-      A simple portal for donations and program payments—clean, secure, and Stripe-powered.
-    </p>
-
-    <!-- Donate block -->
-    <div class="bg-white text-[#0a0f2c] border rounded-2xl shadow-lg p-8 flex flex-col items-center gap-6 max-w-md mx-auto">
-      <img src="https://cdn.firespring.com/images/0b974cf8-0458-4725-9471-35159151de5e.png" 
-           alt="Solutions for Change" class="h-14">
-      
-      <a href="{% url 'donation_widget' %}"
-         class="inline-flex items-center gap-2 bg-[#0a0f2c] text-white px-6 py-3 rounded-xl hover:bg-[#151c40] shadow">
-        Donate to Solutions for Change
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-        </svg>
-      </a>
-    </div>
-
-    <!-- Footer note -->
-    <div class="flex justify-center gap-3 text-sm text-gray-200">
-      <span>Secured by Stripe</span>
-      <span aria-hidden="true">•</span>
-      <a href="https://www.industryrockstar.com/" target="_blank" class="hover:text-pink-400">industryrockstar.com</a>
+    <!-- Visual -->
+    <div class="relative">
+      <div class="absolute -inset-4 bg-sky-100/60 rounded-3xl blur-2xl"></div>
+      <div class="relative bg-white border rounded-3xl shadow-xl p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <img src="https://katalyst-crm.com/wp-content/uploads/2024/09/K-1.png" alt="Katalyst" class="h-10">
+          <span class="text-sm text-gray-500">Demo Preview</span>
+        </div>
+        <div class="space-y-3">
+          <div class="h-4 bg-gray-100 rounded"></div>
+          <div class="h-4 bg-gray-100 rounded w-5/6"></div>
+          <div class="h-4 bg-gray-100 rounded w-2/3"></div>
+        </div>
+        <div class="mt-6 grid grid-cols-2 gap-3">
+          <button class="bg-sky-600 text-white py-2.5 rounded-lg">Donate</button>
+          <a href="{% url 'donation_widget' %}" class="border border-gray-300 py-2.5 rounded-lg text-center hover:bg-gray-50">
+            Solutions for Change
+          </a>
+        </div>
+        <div class="mt-6 flex items-center justify-between text-xs text-gray-500">
+          <span>Secure by Stripe</span>
+          <img src="https://cdn.firespring.com/images/0b974cf8-0458-4725-9471-35159151de5e.png" alt="SFC" class="h-6">
+        </div>
+      </div>
     </div>
   </div>
 </section>

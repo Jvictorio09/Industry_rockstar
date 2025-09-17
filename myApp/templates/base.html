@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>{% block title %}Industry Rockstar | Payments{% endblock %}</title>
+  <title>{% block title %}Katalyst | Payments{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -15,14 +15,21 @@
   <header class="bg-[#0a0f2c]/90 backdrop-blur border-b border-white/10">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
       <a href="{% url 'home' %}" class="flex items-center gap-3">
-        <img src="https://rkstr.willcox.tech/wp-content/uploads/2025/07/industry-rockstar-logo.png" 
-             alt="Industry Rockstar" class="h-9">
-        <span class="sr-only">Industry Rockstar</span>
+        <img src="https://katalyst-crm.com/wp-content/uploads/2024/09/K-1.png" 
+             alt="Katalyst" class="h-9">
+        <span class="sr-only">Katalyst</span>
       </a>
       <nav class="text-sm">
-        <a href="https://www.industryrockstar.com/" target="_blank" 
-           class="hover:text-pink-400 transition">industryrockstar.com</a>
-      </nav>
+  <a href="https://katalyst-crm.com/" target="_blank"
+     class="inline-flex items-center gap-2 bg-pink-500 text-white px-4 py-2 rounded-lg shadow hover:bg-pink-600 transition">
+    Visit Our Website
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M13 7l5 5m0 0l-5 5m5-5H6" />
+    </svg>
+  </a>
+</nav>
+
     </div>
   </header>
 
@@ -34,7 +41,7 @@
   <!-- Footer -->
   <footer class="border-t border-white/10 bg-[#0a0f2c]/90">
     <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-gray-300 flex justify-between items-center">
-      <p>© <span id="y"></span> Industry Rockstar</p>
+      <p>© <span id="y"></span> Katalyst</p>
       <p class="text-pink-400 font-medium">Secure • Powered by Stripe</p>
     </div>
   </footer>
