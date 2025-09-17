@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Industry Rockstar | Payments{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body class="bg-gradient-to-r from-[#0a0f2c] to-[#7b2cbf] text-white">
+  <!-- Header -->
+  <header class="bg-[#0a0f2c]/90 backdrop-blur border-b border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="{% url 'home' %}" class="flex items-center gap-3">
+        <img src="https://rkstr.willcox.tech/wp-content/uploads/2025/07/industry-rockstar-logo.png" 
+             alt="Industry Rockstar" class="h-9">
+        <span class="sr-only">Industry Rockstar</span>
+      </a>
+      <nav class="text-sm">
+        <a href="https://www.industryrockstar.com/" target="_blank" 
+           class="hover:text-pink-400 transition">industryrockstar.com</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="min-h-[70vh]">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 bg-[#0a0f2c]/90">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-gray-300 flex justify-between items-center">
+      <p>© <span id="y"></span> Industry Rockstar</p>
+      <p class="text-pink-400 font-medium">Secure • Powered by Stripe</p>
+    </div>
+  </footer>
+
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Donate | Solutions for Change</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- reCAPTCHA v2 Checkbox -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="bg-white w-full max-w-2xl shadow-lg rounded-2xl p-8">
+
+      <!-- Logo -->
+      <div class="flex justify-center mb-6">
+        <img src="https://cdn.firespring.com/images/0b974cf8-0458-4725-9471-35159151de5e.png"
+             alt="Solutions for Change" class="h-20">
+      </div>
+
+      <h1 class="text-center text-2xl font-bold text-gray-800 mb-2">Support Solutions for Change</h1>
+      <p class="text-center text-gray-600 mb-8">Your gift helps transform lives and create lasting impact.</p>
+
+      <!-- Choose amount -->
+      <h2 class="text-lg font-semibold mb-3 text-center">Choose amount</h2>
+      <div class="flex flex-wrap gap-3 justify-center mb-4">
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="30">$30</button>
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="60">$60</button>
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="100">$100</button>
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="1">$1</button>
+        <input id="custom-amount" type="number" min="1" step="1" placeholder="Other"
+               class="border-2 rounded-lg px-4 py-3 w-28 text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <!-- Amount field mirroring the selection (optional display like screenshot) -->
+      <div class="flex items-center justify-center mb-6">
+        <div class="flex items-center border-2 rounded-lg overflow-hidden w-64">
+          <div class="px-3 py-2 bg-gray-100 text-gray-600">$</div>
+          <input id="amount-display" type="text" readonly
+                 class="px-3 py-2 w-full outline-none"
+                 value="30.00">
+        </div>
+      </div>
+
+      <hr class="my-6">
+
+      <!-- Frequency tabs -->
+      <h2 class="text-lg font-semibold mb-3 text-center">Make your gift recurring</h2>
+      <div class="flex justify-center gap-2 mb-6">
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md bg-blue-600 text-white" data-frequency="one_time">One Time</button>
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md hover:bg-gray-100" data-frequency="monthly">Monthly</button>
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md hover:bg-gray-100" data-frequency="quarterly">Quarterly</button>
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md hover:bg-gray-100" data-frequency="yearly">Yearly</button>
+      </div>
+
+      <!-- Form -->
+      <form id="donation-form" method="POST" action="{% url 'create_checkout_session' %}" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" id="final-amount" name="amount">
+        <input type="hidden" id="donation-frequency" name="frequency">
+        <input type="hidden" name="org" value="{{ org }}">
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">First Name*</label>
+            <input name="first_name" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Last Name*</label>
+            <input name="last_name" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Mobile*</label>
+          <input name="mobile" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email*</label>
+          <input type="email" name="email" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Address</label>
+          <input name="address" class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <input name="city" placeholder="City" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <input name="state" placeholder="State" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <input name="country" placeholder="Country" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <input name="postal_code" placeholder="Postal Code" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Message</label>
+          <textarea name="message" rows="3" class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        </div>
+
+        <label class="flex items-start gap-2 text-sm text-gray-600">
+          <input type="checkbox" required class="mt-1">
+          <span>I approve this donation to Solutions for Change in the amount set above.</span>
+        </label>
+
+        <!-- reCAPTCHA -->
+        <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY|default:'YOUR_SITE_KEY' }}"></div>
+
+        <button class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg font-semibold shadow-md flex items-center justify-center gap-2">
+          <span>Donate Securely</span>
+        </button>
+      </form>
+
+      <p class="text-xs text-gray-500 mt-6 text-center">
+        Solutions for Change is a 501(c)3 tax-exempt organization. Your donation is tax-deductible within U.S. law. Please keep your email receipt for records.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const amountButtons = document.querySelectorAll(".donation-btn");
+    const customAmount  = document.getElementById("custom-amount");
+    const finalAmount   = document.getElementById("final-amount");
+    const amountDisplay = document.getElementById("amount-display");
+    const freqButtons   = document.querySelectorAll(".freq-btn");
+    const donationFreq  = document.getElementById("donation-frequency");
+
+    // Amount selection
+    amountButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        finalAmount.value = btn.dataset.amount;
+        amountDisplay.value = Number(btn.dataset.amount).toFixed(2);
+        customAmount.value = "";
+        amountButtons.forEach(b => b.classList.remove("bg-blue-600","text-white"));
+        btn.classList.add("bg-blue-600","text-white");
+      });
+    });
+
+    customAmount.addEventListener("input", () => {
+      finalAmount.value = customAmount.value;
+      amountDisplay.value = (Number(customAmount.value || 0)).toFixed(2);
+      amountButtons.forEach(b => b.classList.remove("bg-blue-600","text-white"));
+    });
+
+    // Frequency selection
+    freqButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        donationFreq.value = btn.dataset.frequency;
+        freqButtons.forEach(b => b.classList.remove("bg-blue-600","text-white"));
+        btn.classList.add("bg-blue-600","text-white");
+      });
+    });
+
+    // Defaults: $30 One Time
+    document.querySelector(".donation-btn[data-amount='30']").click();
+    document.querySelector(".freq-btn[data-frequency='one_time']").click();
+  </script>
+</body>
+</html>
