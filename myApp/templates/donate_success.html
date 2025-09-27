@@ -1,8 +1,110 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Thank you</title>
-<script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-50">
-  <div class="max-w-lg mx-auto p-8 text-center">
-    <h1 class="text-2xl font-semibold mb-2">Thank you for your gift! 💛</h1>
-    <p class="text-gray-600">A receipt has been emailed to you.</p>
-  </div>
-</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Thank you for your gift</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Open Graph (nice if this page is shared) -->
+  <meta property="og:title" content="Thank you for your gift!" />
+  <meta property="og:description" content="Your generosity helps transform lives, families, and communities for good." />
+  <meta property="og:type" content="website" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Soft confetti dots */
+    .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .dot {
+      position: absolute; width: 8px; height: 8px; border-radius: 9999px;
+      opacity: .85; animation: float 2400ms ease-in forwards;
+    }
+    @keyframes float {
+      0%   { transform: translateY(0) scale(1); opacity: .9; }
+      80%  { opacity: .9; }
+      100% { transform: translateY(120vh) scale(.9); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-slate-800">
+  <main class="min-h-screen flex items-center justify-center p-6">
+    <div class="relative w-full max-w-xl">
+      <!-- Confetti layer -->
+      <div id="confetti" class="confetti -z-10"></div>
+
+      <div class="rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-8 text-center">
+        <!-- Icon -->
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 13 4 4L19 7"/>
+          </svg>
+        </div>
+
+        <h1 class="text-2xl font-semibold tracking-tight">Thank you for your gift! 💛</h1>
+        <p class="mt-2 text-slate-600">A receipt has been emailed to you. If you don’t see it, please check your spam/promotions folder.</p>
+
+        <!-- Impact copy -->
+        <div class="mt-6 text-left text-slate-700 leading-relaxed">
+          <p class="font-medium">Your generosity changes real lives.</p>
+          <p class="mt-2">
+            Each donation helps transform a life, a family, and a community for good. By supporting
+            <span class="font-semibold">Solutions for Change</span>, you’re providing life-changing services to people
+            ready to create a better future for themselves and their children. You’re helping create
+            <span class="italic">Overcomers</span> and restore community—sending a clear message that they are worthy of love and hope.
+          </p>
+        </div>
+
+        <!-- CTA + redirect notice -->
+        <div class="mt-8 flex flex-col items-center gap-3">
+          <a
+            id="cta"
+            href="https://solutionsforchange.org/?utm_term=solutions%20for%20change&utm_campaign=Brand+-+National&utm_source=adwords&utm_medium=ppc&hsa_acc=6269257192&hsa_cam=12871131252&hsa_grp=132905234772&hsa_ad=547825266655&hsa_src=g&hsa_tgt=kwd-301341832944&hsa_kw=solutions%20for%20change&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=12871131252&gbraid=0AAAAACJQo8Nl8wojwmwrMUk8-KWRKYELp&gclid=CjwKCAjwlt7GBhAvEiwAKal0crhzRE-pfAAHz5CUvk-2GnK20b7V19R1XwT-esl9Y0QOMVt9h3IIKhoCO0kQAvD_BwE"
+            class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-white font-medium shadow hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+          >
+            Visit Solutions for Change
+          </a>
+          <p class="text-sm text-slate-500">
+            Redirecting in <span id="secs">9</span>s&hellip; If nothing happens, use the button above.
+            <noscript>JavaScript is disabled—please click the button.</noscript>
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // --- Soft confetti ---
+    (function confettiBurst() {
+      const colors = ["#10B981","#34D399","#A7F3D0","#FDE68A","#FCA5A5","#93C5FD"];
+      const wrap = document.getElementById("confetti");
+      let n = 36; // number of dots
+      for (let i = 0; i < n; i++) {
+        const d = document.createElement("span");
+        d.className = "dot";
+        d.style.left = Math.random() * 100 + "%";
+        d.style.top = (-10 - Math.random() * 30) + "vh";
+        d.style.background = colors[Math.floor(Math.random() * colors.length)];
+        d.style.animationDelay = (Math.random() * 300) + "ms";
+        d.style.animationDuration = (1800 + Math.random() * 1200) + "ms";
+        wrap.appendChild(d);
+        // remove later to keep DOM tidy
+        d.addEventListener("animationend", () => d.remove());
+      }
+      // optional: second mini burst after 1.2s
+      setTimeout(confettiBurst, 1200);
+      // stop after ~5s
+      setTimeout(()=> wrap.replaceChildren(), 5000);
+    })();
+
+    // --- Redirect with countdown ---
+    const target = "https://solutionsforchange.org/?utm_term=solutions%20for%20change&utm_campaign=Brand+-+National&utm_source=adwords&utm_medium=ppc&hsa_acc=6269257192&hsa_cam=12871131252&hsa_grp=132905234772&hsa_ad=547825266655&hsa_src=g&hsa_tgt=kwd-301341832944&hsa_kw=solutions%20for%20change&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=12871131252&gbraid=0AAAAACJQo8Nl8wojwmwrMUk8-KWRKYELp&gclid=CjwKCAjwlt7GBhAvEiwAKal0crhzRE-pfAAHz5CUvk-2GnK20b7V19R1XwT-esl9Y0QOMVt9h3IIKhoCO0kQAvD_BwE";
+    const secsEl = document.getElementById("secs");
+    let s = 9;
+    const tick = setInterval(()=> {
+      s -= 1; if (s < 0) return;
+      secsEl.textContent = s;
+    }, 1000);
+    setTimeout(()=> { clearInterval(tick); window.location.href = target; }, s * 1000);
+    document.getElementById("cta").addEventListener("click", ()=> { clearInterval(tick); });
+  </script>
+</body>
+</html>
