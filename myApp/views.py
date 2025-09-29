@@ -30,6 +30,10 @@ def _url(base: str, path: str) -> str:
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.clickjacking import xframe_options_exempt
 
+# myApp/views.py
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
+
 @xframe_options_exempt
 @ensure_csrf_cookie
 def widget(request):
@@ -38,6 +42,7 @@ def widget(request):
         "RECAPTCHA_SITE_KEY": getattr(settings, "RECAPTCHA_SITE_KEY", ""),
     }
     return render(request, "solutions_for_change.html", ctx)
+
 
 def _verify_recaptcha(token: str) -> bool:
     secret = getattr(settings, "RECAPTCHA_SECRET_KEY", "")

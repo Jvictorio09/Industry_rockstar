@@ -29,17 +29,18 @@ CSRF_TRUSTED_ORIGINS = [
     "https://juliaportfolio-production.up.railway.app/",
 ]
 
-# --- add these ---
+X_FRAME_OPTIONS = "ALLOWALL"  # let CSP be the boss for framing
 CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
-
-# If your widget uses sessions (not strictly required for CSRF, but usually wise to mirror):
 SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://industryrockstar-production.up.railway.app",
+    "https://solutionsforchange.org",
+    "https://www.solutionsforchange.org",
+]
 
-# If you’re embedding in iframe
-X_FRAME_OPTIONS = "ALLOWALL"
 
 
 # Application definition
@@ -62,7 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'myApp.middleware.FrameAncestorsMiddleware'
+    'myApp.middleware.FrameAncestorsMiddleware',
 ]
 
 ROOT_URLCONF = 'myProject.urls'

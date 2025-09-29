@@ -156,7 +156,7 @@
     document.querySelector(".freq-btn[data-frequency='one_time']").click();
   </script>
 
-  <script>
+<script>
   function sendHeight() {
     const h = document.documentElement.scrollHeight || document.body.scrollHeight;
     window.parent.postMessage({ type: "donate-widget-height", height: Math.ceil(h) }, "*");
@@ -166,10 +166,10 @@
     setTimeout(sendHeight, 300);
     setTimeout(sendHeight, 1000);
   });
-  // If your UI expands/collapses, call sendHeight() after those actions too.
   window.addEventListener("resize", sendHeight);
-  // Bonus: keep watching for DOM changes
-  new MutationObserver(() => sendHeight()).observe(document.body, {subtree:true, childList:true, attributes:true});
+  new MutationObserver(() => sendHeight()).observe(document.body, {
+    subtree: true, childList: true, attributes: true
+  });
 </script>
 
 </body>
