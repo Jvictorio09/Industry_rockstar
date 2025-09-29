@@ -54,7 +54,7 @@
       </div>
 
       <!-- Form -->
-      <form id="donation-form" method="POST" action="{% url 'create_checkout_session' %}" class="space-y-4">
+      <form id="donation-form" method="POST" action="{% url 'create_checkout_session' %}" class="space-y-4" target="_top">
         {% csrf_token %}
         <input type="hidden" id="final-amount" name="amount">
         <input type="hidden" id="donation-frequency" name="frequency">
@@ -117,13 +117,20 @@
     </div>
   </div>
 
-  <script>
+<script>
+  // ------- Amount + Frequency UI -------
+  (function () {
     const amountButtons = document.querySelectorAll(".donation-btn");
     const customAmount  = document.getElementById("custom-amount");
     const finalAmount   = document.getElementById("final-amount");
     const amountDisplay = document.getElementById("amount-display");
     const freqButtons   = document.querySelectorAll(".freq-btn");
     const donationFreq  = document.getElementById("donation-frequency");
+
+    const sendHeight = () => {
+      const h = document.documentElement.scrollHeight || document.body.scrollHeight;
+      window.parent.postMessage({ type: "donate-widget-height", height: Math.ceil(h) }, "*");
+    };
 
     // Amount selection
     amountButtons.forEach(btn => {
@@ -133,6 +140,7 @@
         customAmount.value = "";
         amountButtons.forEach(b => b.classList.remove("bg-blue-600","text-white"));
         btn.classList.add("bg-blue-600","text-white");
+        sendHeight();
       });
     });
 
@@ -140,6 +148,7 @@
       finalAmount.value = customAmount.value;
       amountDisplay.value = (Number(customAmount.value || 0)).toFixed(2);
       amountButtons.forEach(b => b.classList.remove("bg-blue-600","text-white"));
+      sendHeight();
     });
 
     // Frequency selection
@@ -148,29 +157,27 @@
         donationFreq.value = btn.dataset.frequency;
         freqButtons.forEach(b => b.classList.remove("bg-blue-600","text-white"));
         btn.classList.add("bg-blue-600","text-white");
+        sendHeight();
       });
     });
 
     // Defaults: $30 One Time
     document.querySelector(".donation-btn[data-amount='30']").click();
     document.querySelector(".freq-btn[data-frequency='one_time']").click();
-  </script>
 
-<script>
-  function sendHeight() {
-    const h = document.documentElement.scrollHeight || document.body.scrollHeight;
-    window.parent.postMessage({ type: "donate-widget-height", height: Math.ceil(h) }, "*");
-  }
-  window.addEventListener("load", () => {
-    sendHeight();
-    setTimeout(sendHeight, 300);
-    setTimeout(sendHeight, 1000);
-  });
-  window.addEventListener("resize", sendHeight);
-  new MutationObserver(() => sendHeight()).observe(document.body, {
-    subtree: true, childList: true, attributes: true
-  });
+    // ------- Auto-fit height (initial + on layout changes) -------
+    window.addEventListener("load", () => {
+      sendHeight();
+      setTimeout(sendHeight, 300);
+      setTimeout(sendHeight, 1000);
+    });
+    window.addEventListener("resize", sendHeight);
+    new MutationObserver(() => sendHeight()).observe(document.body, {
+      subtree: true, childList: true, attributes: true
+    });
+  })();
 </script>
+
 
 </body>
 </html>
