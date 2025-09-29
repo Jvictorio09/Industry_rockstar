@@ -19,7 +19,7 @@
     </p>
 
     <!-- Donate block -->
-    <div class="bg-white text-[#0a0f2c] border rounded-2xl shadow-lg p-8 flex flex-col items-center gap-6 max-w-md mx-auto">
+    <div class="bg-transparent text-white p-8 flex flex-col items-center gap-6 max-w-md mx-auto">
       <img src="https://cdn.firespring.com/images/0b974cf8-0458-4725-9471-35159151de5e.png" 
            alt="Solutions for Change" class="h-14">
       
@@ -33,38 +33,36 @@
       </a>
     </div>
 
+    <!-- Embedded widget -->
     <iframe id="donateFrame"
-  src="https://industryrockstar-production.up.railway.app/donate/widget/"
-  style="width:95%; border:0; overflow:hidden; height:900px"
-  frameborder="0" scrolling="no"></iframe>
+      src="https://industryrockstar-production.up.railway.app/donate/widget/"
+      style="width:95%; border:0; overflow:hidden; height:900px; background:transparent;"
+      frameborder="0" scrolling="no"></iframe>
 
-<script>
-  (function(){
-    const frame = document.getElementById("donateFrame");
-    const relaxForDev = location.hostname === "localhost" || location.hostname === "127.0.0.1";
-    const ALLOW = ["https://industryrockstar-production.up.railway.app"];
+    <script>
+      (function(){
+        const frame = document.getElementById("donateFrame");
+        const relaxForDev = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+        const ALLOW = ["https://industryrockstar-production.up.railway.app"];
 
-    window.addEventListener("message", (e) => {
-      if (!relaxForDev && !ALLOW.includes(e.origin)) return;
-      const d = e.data || {};
-      if (d.type === "donate-widget-height" && Number(d.height) > 0) {
-        frame.style.height = Math.ceil(Number(d.height)) + "px";
-      }
-    }, false);
-  })();
-</script>
-
-
-
+        window.addEventListener("message", (e) => {
+          if (!relaxForDev && !ALLOW.includes(e.origin)) return;
+          const d = e.data || {};
+          if (d.type === "donate-widget-height" && Number(d.height) > 0) {
+            frame.style.height = Math.ceil(Number(d.height)) + "px";
+          }
+        }, false);
+      })();
+    </script>
 
     <!-- Footer note -->
     <div class="flex justify-center gap-3 text-sm text-gray-200">
       <span>Secured by Stripe</span>
       <span aria-hidden="true">•</span>
-      <a href="https://katalyst-crm.com/" target="_blank" class="hover:text-pink-400">https://katalyst-crm.com/</a>
+      <a href="https://katalyst-crm.com/" target="_blank" class="hover:text-pink-400">
+        https://katalyst-crm.com/
+      </a>
     </div>
   </div>
 </section>
-
-
 {% endblock %}
