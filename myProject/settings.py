@@ -15,15 +15,28 @@ SECRET_KEY = 'django-insecure-*=hdmmg^5%92(1atrd%u9avi_g^qvx+uj$z)$0*otz4_8=o3xp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# settings.py
+# --- existing ---
 ALLOWED_HOSTS = [
-    "*",  # not ideal for prod, but safe enough for Railway demo
+    "*",
     "industryrockstar-production.up.railway.app",
 ]
 
-# CSRF trusted origins (must include your Railway URL + any custom domain)
 CSRF_TRUSTED_ORIGINS = [
     "https://industryrockstar-production.up.railway.app",
+    # Optional (safe): include partner if you ever use absolute POST URLs or JS fetches from their domain
+    "https://solutionsforchange.org",
+    "https://juliaportfolio-production.up.railway.app/",
 ]
+
+# --- add these ---
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+
+# If your widget uses sessions (not strictly required for CSRF, but usually wise to mirror):
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+
 
 # If you’re embedding in iframe
 X_FRAME_OPTIONS = "ALLOWALL"
@@ -49,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'myApp.middleware.FrameAncestorsMiddleware'
 ]
 
 ROOT_URLCONF = 'myProject.urls'
