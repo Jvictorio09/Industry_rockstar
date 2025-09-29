@@ -29,7 +29,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://juliaportfolio-production.up.railway.app/",
 ]
 
-X_FRAME_OPTIONS = "ALLOWALL"  # let CSP be the boss for framing
+X_FRAME_OPTIONS = "ALLOWALL"
+
 CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = "None"
@@ -37,9 +38,8 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://industryrockstar-production.up.railway.app",
-    "https://solutionsforchange.org",
-    "https://www.solutionsforchange.org",
 ]
+
 
 
 
