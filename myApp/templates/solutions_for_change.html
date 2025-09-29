@@ -157,17 +157,20 @@
   </script>
 
   <script>
-    function sendHeight() {
-      const h = document.documentElement.scrollHeight || document.body.scrollHeight;
-      window.parent.postMessage({ type: "donate-widget-height", height: h }, "*");
-    }
+  function sendHeight() {
+    const h = document.documentElement.scrollHeight || document.body.scrollHeight;
+    window.parent.postMessage({ type: "donate-widget-height", height: Math.ceil(h) }, "*");
+  }
+  window.addEventListener("load", () => {
+    sendHeight();
+    setTimeout(sendHeight, 300);
+    setTimeout(sendHeight, 1000);
+  });
+  // If your UI expands/collapses, call sendHeight() after those actions too.
+  window.addEventListener("resize", sendHeight);
+  // Bonus: keep watching for DOM changes
+  new MutationObserver(() => sendHeight()).observe(document.body, {subtree:true, childList:true, attributes:true});
+</script>
 
-    window.addEventListener("load", () => {
-      sendHeight();
-      setTimeout(sendHeight, 300);   // after Tailwind/fonts settle
-      setTimeout(sendHeight, 1000);  // extra safety pass
-    });
-    window.addEventListener("resize", sendHeight);
-  </script>
 </body>
 </html>

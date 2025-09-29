@@ -27,6 +27,11 @@ def _usd_cents(amount_str: str) -> int:
 def _url(base: str, path: str) -> str:
     return base.rstrip("/") + "/" + path.lstrip("/")
 
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+@xframe_options_exempt
+@ensure_csrf_cookie
 def widget(request):
     ctx = {
         "org": request.GET.get("org", "solutions-for-change"),
