@@ -10,6 +10,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 import stripe
 
 def home(request):
@@ -55,6 +56,7 @@ def _verify_recaptcha(token: str) -> bool:
     except Exception:
         return False
 
+@method_decorator(csrf_exempt, name='dispatch')
 class CreateCheckoutSessionView(View):
     """
     Handles one-time and recurring (monthly/quarterly/yearly) via Checkout.

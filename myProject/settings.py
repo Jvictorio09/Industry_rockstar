@@ -20,13 +20,21 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "*",
     "industryrockstar-production.up.railway.app",
+    "www.industryrockstar-production.up.railway.app",
+    "solutionsforchange.org",
+    "www.solutionsforchange.org",
+    "juliaportfolio-production.up.railway.app",
+    "www.juliaportfolio-production.up.railway.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://industryrockstar-production.up.railway.app",
+    "https://www.industryrockstar-production.up.railway.app",
     # Optional (safe): include partner if you ever use absolute POST URLs or JS fetches from their domain
     "https://solutionsforchange.org",
-    "https://juliaportfolio-production.up.railway.app/",
+    "https://www.solutionsforchange.org",
+    "https://juliaportfolio-production.up.railway.app",
+    "https://www.juliaportfolio-production.up.railway.app",
 ]
 
 X_FRAME_OPTIONS = "ALLOWALL"
@@ -35,10 +43,6 @@ CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://industryrockstar-production.up.railway.app",
-]
 
 
 
