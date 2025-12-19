@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Web3 Payment Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .glow-effect {
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3), 0 0 40px rgba(118, 75, 162, 0.2);
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.3), 0 0 40px rgba(118, 75, 162, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(102, 126, 234, 0.5), 0 0 60px rgba(118, 75, 162, 0.4);
+      }
+    }
+    
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    
+    .grid-pattern {
+      background-image: 
+        linear-gradient(rgba(102, 126, 234, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(102, 126, 234, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    .crypto-card {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .crypto-card:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+      border-color: rgba(102, 126, 234, 0.5);
+      transform: translateY(-2px);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .input-field {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .input-field:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(102, 126, 234, 0.5);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .status-connected {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-pending {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+    
+    .status-confirmed {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+  </style>
+</head>
+<body class="grid-pattern">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="w-full max-w-2xl">
+      
+      <!-- Header -->
+      <div class="text-center mb-8 floating">
+        <h1 class="text-5xl sm:text-6xl font-black mb-4">
+          <span class="gradient-text">Web3</span>
+          <span class="text-white">Payment</span>
+        </h1>
+        <p class="text-gray-400 text-lg">Secure, decentralized payments on Base</p>
+      </div>
+
+      <!-- Main Payment Card -->
+      <div class="glass-effect rounded-3xl p-8 sm:p-10 glow-effect">
+        
+        <!-- Wallet Connection Status -->
+        <div id="wallet-status" class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Wallet Connection</h2>
+            <div id="connection-badge" class="status-badge status-pending">
+              <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+              <span>Not Connected</span>
+            </div>
+          </div>
+          
+          <button id="connect-btn" class="w-full btn-primary text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-3 pulse-glow">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Connect MetaMask
+          </button>
+          
+          <div id="wallet-info" class="hidden mt-4 p-4 crypto-card rounded-xl">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-400 text-sm mb-1">Connected Wallet</p>
+                <p id="wallet-address" class="text-white font-mono text-sm"></p>
+              </div>
+              <div class="text-right">
+                <p class="text-gray-400 text-sm mb-1">Network</p>
+                <p id="network-name" class="text-white font-semibold">Base</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Form -->
+        <div id="payment-form" class="hidden">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-white mb-4">Payment Details</h2>
+            
+            <!-- Amount Selection -->
+            <div class="mb-6">
+              <label class="block text-gray-300 text-sm font-medium mb-3">Amount (USDC)</label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="25">$25</button>
+                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="50">$50</button>
+                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="100">$100</button>
+                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="250">$250</button>
+              </div>
+              <div class="relative">
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-semibold">$</div>
+                <input type="number" id="custom-amount" placeholder="Custom amount" min="1" step="0.01"
+                       class="input-field w-full pl-10 pr-4 py-4 rounded-xl text-white placeholder-gray-500">
+              </div>
+              <div class="mt-2 text-center">
+                <span class="text-gray-400 text-sm">Selected: </span>
+                <span id="selected-amount" class="text-white font-bold text-lg">$0.00</span>
+              </div>
+            </div>
+
+            <!-- Customer Information -->
+            <div class="space-y-4 mb-6">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-gray-300 text-sm font-medium mb-2">First Name*</label>
+                  <input type="text" id="first-name" required
+                         class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+                </div>
+                <div>
+                  <label class="block text-gray-300 text-sm font-medium mb-2">Last Name*</label>
+                  <input type="text" id="last-name" required
+                         class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-gray-300 text-sm font-medium mb-2">Email*</label>
+                <input type="email" id="email" required
+                       class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+              </div>
+              
+              <div>
+                <label class="block text-gray-300 text-sm font-medium mb-2">Phone</label>
+                <input type="tel" id="phone"
+                       class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+              </div>
+              
+              <div>
+                <label class="block text-gray-300 text-sm font-medium mb-2">Notes (Optional)</label>
+                <textarea id="notes" rows="3"
+                          class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 resize-none"></textarea>
+              </div>
+            </div>
+
+            <!-- Payment Button -->
+            <button id="pay-btn" class="w-full btn-primary text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Pay with USDC
+            </button>
+          </div>
+        </div>
+
+        <!-- Transaction Status -->
+        <div id="transaction-status" class="hidden">
+          <div class="crypto-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold text-white">Transaction Status</h3>
+              <div id="tx-status-badge" class="status-badge status-pending">
+                <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                <span>Pending</span>
+              </div>
+            </div>
+            
+            <div class="space-y-3">
+              <div>
+                <p class="text-gray-400 text-sm mb-1">Transaction Hash</p>
+                <a id="tx-hash-link" href="#" target="_blank" class="text-white font-mono text-sm break-all hover:text-purple-400">
+                  <span id="tx-hash"></span>
+                </a>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <span class="text-gray-400 text-sm">Confirmations</span>
+                <span class="text-white font-semibold">
+                  <span id="tx-confirmations">0</span> / <span id="tx-required">2</span>
+                </span>
+              </div>
+              
+              <div class="mt-4">
+                <div class="w-full bg-gray-700 rounded-full h-2">
+                  <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
+          <p id="error-text" class="text-red-400 text-sm"></p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center mt-8 text-gray-500 text-sm">
+        <p>Powered by Base Network • Secured by Blockchain</p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ========== Configuration ==========
+  const BASE_CHAIN_ID = 8453;
+  const BASE_CHAIN_NAME = 'Base';
+  const BASE_RPC_URL = 'https://mainnet.base.org';
+  const BASE_EXPLORER_URL = 'https://basescan.org';
+  const USDC_CONTRACT_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+  const USDC_DECIMALS = 6;
+  const RECEIVER_WALLET = '0x918e03d7c59d61b6505fed486082419941ffd77f';
+
+  const USDC_ABI = [
+    {
+      "constant": false,
+      "inputs": [
+        {"name": "to", "type": "address"},
+        {"name": "amount", "type": "uint256"}
+      ],
+      "name": "transfer",
+      "outputs": [{"name": "", "type": "bool"}],
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {"indexed": true, "name": "from", "type": "address"},
+        {"indexed": true, "name": "to", "type": "address"},
+        {"indexed": false, "name": "value", "type": "uint256"}
+      ],
+      "name": "Transfer",
+      "type": "event"
+    }
+  ];
+
+  // ========== State ==========
+  let connectedWallet = null;
+  let selectedAmount = 0;
+
+  // ========== UI Elements ==========
+  const connectBtn = document.getElementById('connect-btn');
+  const walletStatus = document.getElementById('wallet-status');
+  const connectionBadge = document.getElementById('connection-badge');
+  const walletInfo = document.getElementById('wallet-info');
+  const walletAddress = document.getElementById('wallet-address');
+  const networkName = document.getElementById('network-name');
+  const paymentForm = document.getElementById('payment-form');
+  const amountButtons = document.querySelectorAll('.amount-btn');
+  const customAmount = document.getElementById('custom-amount');
+  const selectedAmountEl = document.getElementById('selected-amount');
+  const payBtn = document.getElementById('pay-btn');
+  const transactionStatus = document.getElementById('transaction-status');
+  const txStatusBadge = document.getElementById('tx-status-badge');
+  const txHash = document.getElementById('tx-hash');
+  const txHashLink = document.getElementById('tx-hash-link');
+  const txConfirmations = document.getElementById('tx-confirmations');
+  const txRequired = document.getElementById('tx-required');
+  const progressBar = document.getElementById('progress-bar');
+  const errorMessage = document.getElementById('error-message');
+  const errorText = document.getElementById('error-text');
+
+  // ========== Helper Functions ==========
+  function formatAddress(address) {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  }
+
+  function showError(message) {
+    errorText.textContent = message;
+    errorMessage.classList.remove('hidden');
+    setTimeout(() => errorMessage.classList.add('hidden'), 5000);
+  }
+
+  function hideError() {
+    errorMessage.classList.add('hidden');
+  }
+
+  function updateAmount(amount) {
+    selectedAmount = parseFloat(amount) || 0;
+    selectedAmountEl.textContent = `$${selectedAmount.toFixed(2)}`;
+    
+    // Update button states
+    amountButtons.forEach(btn => {
+      if (btn.dataset.amount == amount) {
+        btn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+        btn.classList.remove('crypto-card');
+      } else {
+        btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+        btn.classList.add('crypto-card');
+      }
+    });
+  }
+
+  // ========== MetaMask Functions ==========
+  function isMetaMaskInstalled() {
+    return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+  }
+
+  async function connectMetaMask() {
+    if (!isMetaMaskInstalled()) {
+      showError('MetaMask is not installed. Please install MetaMask to continue.');
+      window.open('https://metamask.io/download/', '_blank');
+      return null;
+    }
+
+    try {
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      if (accounts.length === 0) {
+        throw new Error('No accounts found');
+      }
+
+      return accounts[0];
+    } catch (error) {
+      console.error('Error connecting to MetaMask:', error);
+      if (error.code === 4001) {
+        showError('Please connect your MetaMask wallet to continue.');
+      } else {
+        showError('Failed to connect to MetaMask. Please try again.');
+      }
+      return null;
+    }
+  }
+
+  async function getNetwork() {
+    try {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      return parseInt(chainId, 16);
+    } catch (error) {
+      console.error('Error getting network:', error);
+      return null;
+    }
+  }
+
+  async function switchToBase() {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${BASE_CHAIN_ID.toString(16)}` }],
+      });
+      return true;
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: `0x${BASE_CHAIN_ID.toString(16)}`,
+              chainName: BASE_CHAIN_NAME,
+              nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+              },
+              rpcUrls: [BASE_RPC_URL],
+              blockExplorerUrls: [BASE_EXPLORER_URL]
+            }],
+          });
+          return true;
+        } catch (addError) {
+          console.error('Error adding Base network:', addError);
+          showError('Failed to add Base network to MetaMask');
+          return false;
+        }
+      } else {
+        console.error('Error switching network:', switchError);
+        showError('Failed to switch to Base network');
+        return false;
+      }
+    }
+  }
+
+  async function ensureBaseNetwork() {
+    const currentNetwork = await getNetwork();
+    if (currentNetwork !== BASE_CHAIN_ID) {
+      const switched = await switchToBase();
+      if (!switched) {
+        return false;
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    return true;
+  }
+
+  function usdcToRaw(usdcAmount) {
+    return ethers.utils.parseUnits(usdcAmount.toString(), USDC_DECIMALS);
+  }
+
+  // ========== Transaction Functions ==========
+  async function sendUSDCTransfer(amountUSDC, customerInfo) {
+    try {
+      const onBase = await ensureBaseNetwork();
+      if (!onBase) {
+        return { success: false, error: 'Please switch to Base network' };
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const usdcContract = new ethers.Contract(USDC_CONTRACT_ADDRESS, USDC_ABI, signer);
+      const amountRaw = usdcToRaw(amountUSDC);
+
+      let gasEstimate;
+      try {
+        gasEstimate = await usdcContract.estimateGas.transfer(RECEIVER_WALLET, amountRaw);
+      } catch (error) {
+        console.error('Gas estimation failed:', error);
+        gasEstimate = ethers.BigNumber.from('100000');
+      }
+
+      const tx = await usdcContract.transfer(RECEIVER_WALLET, amountRaw, {
+        gasLimit: gasEstimate.mul(120).div(100),
+      });
+
+      console.log('Transaction sent:', tx.hash);
+
+      const verifyResponse = await fetch('/api/crypto/verify-transaction/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          transaction_hash: tx.hash,
+          amount_usdc: amountUSDC,
+          from_address: connectedWallet,
+          ...customerInfo,
+        }),
+      });
+
+      const verifyData = await verifyResponse.json();
+
+      if (!verifyData.success) {
+        return { success: false, error: verifyData.error };
+      }
+
+      return {
+        success: true,
+        transaction_hash: tx.hash,
+        payment_id: verifyData.payment_id,
+        confirmations: verifyData.confirmations,
+        required_confirmations: verifyData.required_confirmations,
+      };
+
+    } catch (error) {
+      console.error('Error sending USDC transfer:', error);
+      if (error.code === 4001) {
+        return { success: false, error: 'Transaction rejected by user' };
+      } else if (error.code === -32603) {
+        return { success: false, error: 'Insufficient USDC balance or gas' };
+      } else {
+        return { success: false, error: error.message || 'Transaction failed' };
+      }
+    }
+  }
+
+  async function checkPaymentStatus(txHash) {
+    try {
+      const response = await fetch(`/api/crypto/payment-status/${txHash}/`);
+      if (!response.ok) {
+        return null;
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      return null;
+    }
+  }
+
+  async function waitForConfirmation(txHash, onUpdate) {
+    const maxAttempts = 120;
+    let attempts = 0;
+
+    const poll = async () => {
+      attempts++;
+      const status = await checkPaymentStatus(txHash);
+
+      if (status) {
+        onUpdate(status);
+
+        if (status.status === 'confirmed') {
+          txStatusBadge.className = 'status-badge status-confirmed';
+          txStatusBadge.innerHTML = '<div class="w-2 h-2 bg-green-400 rounded-full"></div><span>Confirmed</span>';
+          progressBar.style.width = '100%';
+          setTimeout(() => {
+            window.location.href = `/donate/success/?method=metamask&tx=${txHash}`;
+          }, 2000);
+          return true;
+        }
+
+        if (status.status === 'failed') {
+          txStatusBadge.className = 'status-badge';
+          txStatusBadge.innerHTML = '<div class="w-2 h-2 bg-red-400 rounded-full"></div><span>Failed</span>';
+          showError('Transaction failed');
+          return false;
+        }
+      }
+
+      if (attempts >= maxAttempts) {
+        showError('Transaction confirmation timeout');
+        return false;
+      }
+
+      setTimeout(poll, 5000);
+    };
+
+    poll();
+  }
+
+  // ========== Event Handlers ==========
+  connectBtn.addEventListener('click', async () => {
+    hideError();
+    connectBtn.disabled = true;
+    connectBtn.textContent = 'Connecting...';
+
+    const account = await connectMetaMask();
+    if (account) {
+      connectedWallet = account;
+      walletAddress.textContent = formatAddress(account);
+      networkName.textContent = 'Base';
+      
+      connectionBadge.className = 'status-badge status-connected';
+      connectionBadge.innerHTML = '<div class="w-2 h-2 bg-green-400 rounded-full"></div><span>Connected</span>';
+      
+      walletInfo.classList.remove('hidden');
+      connectBtn.classList.add('hidden');
+      paymentForm.classList.remove('hidden');
+
+      const network = await getNetwork();
+      if (network !== BASE_CHAIN_ID) {
+        showError('Please switch to Base network');
+      }
+    }
+
+    connectBtn.disabled = false;
+    if (!connectedWallet) {
+      connectBtn.textContent = 'Connect MetaMask';
+    }
+  });
+
+  // Amount selection
+  amountButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      updateAmount(btn.dataset.amount);
+      customAmount.value = '';
+    });
+  });
+
+  customAmount.addEventListener('input', () => {
+    updateAmount(customAmount.value);
+    amountButtons.forEach(b => {
+      b.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+      b.classList.add('crypto-card');
+    });
+  });
+
+  // Payment button
+  payBtn.addEventListener('click', async () => {
+    if (selectedAmount <= 0) {
+      showError('Please select an amount');
+      return;
+    }
+
+    if (!connectedWallet) {
+      showError('Please connect your MetaMask wallet first');
+      return;
+    }
+
+    const firstName = document.getElementById('first-name').value;
+    const lastName = document.getElementById('last-name').value;
+    const email = document.getElementById('email').value;
+
+    if (!firstName || !lastName || !email) {
+      showError('Please fill in all required fields');
+      return;
+    }
+
+    const customerInfo = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      mobile: document.getElementById('phone').value,
+      message: document.getElementById('notes').value,
+      org: 'tanya-client',
+      frequency: 'one_time',
+    };
+
+    payBtn.disabled = true;
+    payBtn.textContent = 'Processing...';
+
+    try {
+      const result = await sendUSDCTransfer(selectedAmount, customerInfo);
+
+      if (result.success) {
+        paymentForm.classList.add('hidden');
+        transactionStatus.classList.remove('hidden');
+        txHash.textContent = result.transaction_hash;
+        txHashLink.href = `https://basescan.org/tx/${result.transaction_hash}`;
+        txConfirmations.textContent = result.confirmations;
+        txRequired.textContent = result.required_confirmations;
+        
+        const progress = (result.confirmations / result.required_confirmations) * 100;
+        progressBar.style.width = `${Math.min(progress, 100)}%`;
+
+        waitForConfirmation(result.transaction_hash, (status) => {
+          txConfirmations.textContent = status.confirmations;
+          txRequired.textContent = status.required_confirmations;
+          const progress = (status.confirmations / status.required_confirmations) * 100;
+          progressBar.style.width = `${Math.min(progress, 100)}%`;
+        });
+      } else {
+        showError('Payment failed: ' + result.error);
+        payBtn.disabled = false;
+        payBtn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Pay with USDC';
+      }
+    } catch (error) {
+      showError('Error: ' + error.message);
+      payBtn.disabled = false;
+      payBtn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Pay with USDC';
+    }
+  });
+
+  // Listen for network changes
+  if (window.ethereum) {
+    window.ethereum.on('chainChanged', (chainId) => {
+      const networkId = parseInt(chainId, 16);
+      if (networkId !== BASE_CHAIN_ID && connectedWallet) {
+        showError('Please switch to Base network');
+      } else {
+        hideError();
+      }
+    });
+
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length === 0) {
+        connectedWallet = null;
+        walletInfo.classList.add('hidden');
+        paymentForm.classList.add('hidden');
+        connectBtn.classList.remove('hidden');
+        connectionBadge.className = 'status-badge status-pending';
+        connectionBadge.innerHTML = '<div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div><span>Not Connected</span>';
+      } else {
+        connectedWallet = accounts[0];
+        walletAddress.textContent = formatAddress(connectedWallet);
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
+

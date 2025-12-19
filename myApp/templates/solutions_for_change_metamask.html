@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Donate with Crypto | Solutions for Change</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Ethers.js for blockchain interaction -->
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+</head>
+<body class="">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="bg-white w-full max-w-2xl shadow-lg rounded-2xl p-8">
+
+      <!-- Logo -->
+      <div class="flex justify-center mb-6">
+        <img src="https://cdn.firespring.com/images/0b974cf8-0458-4725-9471-35159151de5e.png"
+             alt="Solutions for Change" class="h-20">
+      </div>
+
+      <h1 class="text-center text-2xl font-bold text-gray-800 mb-2">Support Solutions for Change</h1>
+      <p class="text-center text-gray-600 mb-8">Your gift helps transform lives and create lasting impact.</p>
+
+      <!-- Choose amount -->
+      <h2 class="text-lg font-semibold mb-3 text-center">Choose amount</h2>
+      <div class="flex flex-wrap gap-3 justify-center mb-4">
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="25">$25</button>
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="50">$50</button>
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="100">$100</button>
+        <button type="button" class="donation-btn px-6 py-3 rounded-lg border-2 border-gray-300 hover:border-blue-600 hover:text-blue-600 transition" data-amount="250">$250</button>
+        <input id="custom-amount" type="number" min="1" step="1" placeholder="Other"
+               class="border-2 rounded-lg px-4 py-3 w-28 text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <!-- Amount field mirroring the selection -->
+      <div class="flex items-center justify-center mb-6">
+        <div class="flex items-center border-2 rounded-lg overflow-hidden w-64">
+          <div class="px-3 py-2 bg-gray-100 text-gray-600">$</div>
+          <input id="amount-display" type="text" readonly
+                 class="px-3 py-2 w-full outline-none"
+                 value="25.00">
+        </div>
+      </div>
+
+      <hr class="my-6">
+
+      <!-- Frequency tabs -->
+      <h2 class="text-lg font-semibold mb-3 text-center">Make your gift recurring</h2>
+      <div class="flex justify-center gap-2 mb-6">
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md bg-blue-600 text-white" data-frequency="one_time">One Time</button>
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md hover:bg-gray-100" data-frequency="monthly">Monthly</button>
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md hover:bg-gray-100" data-frequency="quarterly">Quarterly</button>
+        <button type="button" class="freq-btn px-4 py-2 border rounded-md hover:bg-gray-100" data-frequency="yearly">Yearly</button>
+      </div>
+
+      <!-- MetaMask Connection Status -->
+      <div id="metamask-status" class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="text-sm text-blue-800">
+            <span id="wallet-address" class="font-mono"></span>
+          </p>
+        </div>
+      </div>
+
+      <!-- MetaMask Error/Warning -->
+      <div id="metamask-error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg hidden">
+        <p class="text-sm text-red-800" id="error-message"></p>
+      </div>
+
+      <!-- Donor Information Form -->
+      <form id="donor-form" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">First Name*</label>
+            <input id="first-name" name="first_name" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Last Name*</label>
+            <input id="last-name" name="last_name" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Mobile*</label>
+          <input id="mobile" name="mobile" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email*</label>
+          <input type="email" id="email" name="email" required class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Address</label>
+          <input id="address" name="address" class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <input id="city" name="city" placeholder="City" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <input id="state" name="state" placeholder="State" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <input id="country" name="country" placeholder="Country" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <input id="postal-code" name="postal_code" placeholder="Postal Code" class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Message</label>
+          <textarea id="message" name="message" rows="3" class="border rounded-lg w-full px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        </div>
+
+        <input type="hidden" id="org" name="org" value="{{ org }}">
+        <input type="hidden" id="final-amount" name="amount">
+        <input type="hidden" id="donation-frequency" name="frequency">
+
+        <label class="flex items-start gap-2 text-sm text-gray-600">
+          <input type="checkbox" id="approval-checkbox" required class="mt-1">
+          <span>I approve this donation to Solutions for Change in the amount set above.</span>
+        </label>
+
+        <!-- Payment Info Notice -->
+        <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+          <p class="text-xs text-gray-600 mb-2">
+            <strong>Pay with USDC on Base:</strong> You'll need USDC tokens in your wallet and a small amount of ETH for gas fees.
+          </p>
+          <p class="text-xs text-gray-500">
+            Make sure you're connected to the Base network in MetaMask.
+          </p>
+        </div>
+        
+        <button type="button" id="connect-metamask-btn" class="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white py-3 rounded-lg font-semibold shadow-md flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span>Connect MetaMask</span>
+        </button>
+
+        <button type="button" id="donate-metamask-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-lg font-semibold shadow-md flex items-center justify-center gap-2 hidden">
+          <span>Donate with USDC</span>
+        </button>
+      </form>
+
+      <!-- Transaction Status -->
+      <div id="transaction-status" class="mt-4 hidden">
+        <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+            <p class="font-semibold text-blue-800">Transaction Pending</p>
+          </div>
+          <p class="text-sm text-gray-600 mb-1">
+            Hash: <span id="tx-hash" class="font-mono text-blue-600"></span>
+          </p>
+          <p class="text-sm text-gray-700">
+            Confirmations: <span id="tx-confirmations" class="font-semibold">0</span> / <span id="tx-required" class="font-semibold">2</span>
+          </p>
+          <a id="basescan-link" href="#" target="_blank" class="text-sm text-blue-600 hover:underline mt-2 inline-block">
+            View on Basescan →
+          </a>
+        </div>
+      </div>
+
+      <p class="text-xs text-gray-500 mt-6 text-center">
+        Solutions for Change is a 501(c)3 tax-exempt organization. Your donation is tax-deductible within U.S. law. Please keep your email receipt for records.
+      </p>
+    </div>
+  </div>
+
+<script>
+  // ========== Configuration ==========
+  const BASE_CHAIN_ID = 8453; // Base mainnet
+  const BASE_CHAIN_NAME = 'Base';
+  const BASE_RPC_URL = 'https://mainnet.base.org';
+  const BASE_EXPLORER_URL = 'https://basescan.org';
+  const USDC_CONTRACT_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+  const USDC_DECIMALS = 6;
+  const RECEIVER_WALLET = '0x918e03d7c59d61b6505fed486082419941ffd77f';
+
+  // Minimal USDC ABI
+  const USDC_ABI = [
+    {
+      "constant": false,
+      "inputs": [
+        {"name": "to", "type": "address"},
+        {"name": "amount", "type": "uint256"}
+      ],
+      "name": "transfer",
+      "outputs": [{"name": "", "type": "bool"}],
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {"indexed": true, "name": "from", "type": "address"},
+        {"indexed": true, "name": "to", "type": "address"},
+        {"indexed": false, "name": "value", "type": "uint256"}
+      ],
+      "name": "Transfer",
+      "type": "event"
+    }
+  ];
+
+  // ========== State ==========
+  let connectedWallet = null;
+  let currentProvider = null;
+  let currentSigner = null;
+
+  // ========== UI Elements ==========
+  const connectBtn = document.getElementById('connect-metamask-btn');
+  const donateBtn = document.getElementById('donate-metamask-btn');
+  const metamaskStatus = document.getElementById('metamask-status');
+  const metamaskError = document.getElementById('metamask-error');
+  const errorMessage = document.getElementById('error-message');
+  const walletAddress = document.getElementById('wallet-address');
+  const transactionStatus = document.getElementById('transaction-status');
+  const txHashEl = document.getElementById('tx-hash');
+  const txConfirmationsEl = document.getElementById('tx-confirmations');
+  const txRequiredEl = document.getElementById('tx-required');
+  const basescanLink = document.getElementById('basescan-link');
+
+  // ========== Helper Functions ==========
+  function showError(message) {
+    errorMessage.textContent = message;
+    metamaskError.classList.remove('hidden');
+    setTimeout(() => metamaskError.classList.add('hidden'), 5000);
+  }
+
+  function hideError() {
+    metamaskError.classList.add('hidden');
+  }
+
+  function formatAddress(address) {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  }
+
+  // ========== MetaMask Functions ==========
+  function isMetaMaskInstalled() {
+    return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+  }
+
+  async function connectMetaMask() {
+    if (!isMetaMaskInstalled()) {
+      showError('MetaMask is not installed. Please install MetaMask to continue.');
+      window.open('https://metamask.io/download/', '_blank');
+      return null;
+    }
+
+    try {
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      if (accounts.length === 0) {
+        throw new Error('No accounts found');
+      }
+
+      return accounts[0];
+    } catch (error) {
+      console.error('Error connecting to MetaMask:', error);
+      if (error.code === 4001) {
+        showError('Please connect your MetaMask wallet to continue.');
+      } else {
+        showError('Failed to connect to MetaMask. Please try again.');
+      }
+      return null;
+    }
+  }
+
+  async function getNetwork() {
+    try {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      return parseInt(chainId, 16);
+    } catch (error) {
+      console.error('Error getting network:', error);
+      return null;
+    }
+  }
+
+  async function switchToBase() {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${BASE_CHAIN_ID.toString(16)}` }],
+      });
+      return true;
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        // Add Base network
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: `0x${BASE_CHAIN_ID.toString(16)}`,
+              chainName: BASE_CHAIN_NAME,
+              nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+              },
+              rpcUrls: [BASE_RPC_URL],
+              blockExplorerUrls: [BASE_EXPLORER_URL]
+            }],
+          });
+          return true;
+        } catch (addError) {
+          console.error('Error adding Base network:', addError);
+          showError('Failed to add Base network to MetaMask');
+          return false;
+        }
+      } else {
+        console.error('Error switching network:', switchError);
+        showError('Failed to switch to Base network');
+        return false;
+      }
+    }
+  }
+
+  async function ensureBaseNetwork() {
+    const currentNetwork = await getNetwork();
+    if (currentNetwork !== BASE_CHAIN_ID) {
+      const switched = await switchToBase();
+      if (!switched) {
+        return false;
+      }
+      // Wait for network switch
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    return true;
+  }
+
+  function usdcToRaw(usdcAmount) {
+    return ethers.utils.parseUnits(usdcAmount.toString(), USDC_DECIMALS);
+  }
+
+  // ========== Transaction Functions ==========
+  async function sendUSDCTransfer(amountUSDC, donorInfo) {
+    try {
+      // Ensure Base network
+      const onBase = await ensureBaseNetwork();
+      if (!onBase) {
+        return { success: false, error: 'Please switch to Base network' };
+      }
+
+      // Initialize provider and signer
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      // Initialize USDC contract
+      const usdcContract = new ethers.Contract(
+        USDC_CONTRACT_ADDRESS,
+        USDC_ABI,
+        signer
+      );
+
+      // Convert amount to raw units
+      const amountRaw = usdcToRaw(amountUSDC);
+
+      // Estimate gas
+      let gasEstimate;
+      try {
+        gasEstimate = await usdcContract.estimateGas.transfer(RECEIVER_WALLET, amountRaw);
+      } catch (error) {
+        console.error('Gas estimation failed:', error);
+        gasEstimate = ethers.BigNumber.from('100000');
+      }
+
+      // Send transfer transaction
+      const tx = await usdcContract.transfer(RECEIVER_WALLET, amountRaw, {
+        gasLimit: gasEstimate.mul(120).div(100), // Add 20% buffer
+      });
+
+      console.log('Transaction sent:', tx.hash);
+
+      // Verify transaction with backend
+      const verifyResponse = await fetch('/api/crypto/verify-transaction/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          transaction_hash: tx.hash,
+          amount_usdc: amountUSDC,
+          from_address: connectedWallet,
+          ...donorInfo,
+        }),
+      });
+
+      const verifyData = await verifyResponse.json();
+
+      if (!verifyData.success) {
+        return { success: false, error: verifyData.error };
+      }
+
+      return {
+        success: true,
+        transaction_hash: tx.hash,
+        payment_id: verifyData.payment_id,
+        confirmations: verifyData.confirmations,
+        required_confirmations: verifyData.required_confirmations,
+      };
+
+    } catch (error) {
+      console.error('Error sending USDC transfer:', error);
+
+      if (error.code === 4001) {
+        return { success: false, error: 'Transaction rejected by user' };
+      } else if (error.code === -32603) {
+        return { success: false, error: 'Insufficient USDC balance or gas' };
+      } else {
+        return { success: false, error: error.message || 'Transaction failed' };
+      }
+    }
+  }
+
+  async function checkPaymentStatus(txHash) {
+    try {
+      const response = await fetch(`/api/crypto/payment-status/${txHash}/`);
+      if (!response.ok) {
+        return null;
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      return null;
+    }
+  }
+
+  async function waitForConfirmation(txHash, onUpdate) {
+    const maxAttempts = 120; // 10 minutes
+    let attempts = 0;
+
+    const poll = async () => {
+      attempts++;
+      const status = await checkPaymentStatus(txHash);
+
+      if (status) {
+        onUpdate(status);
+
+        if (status.status === 'confirmed') {
+          // Redirect to success page
+          window.location.href = `/donate/success/?method=metamask&tx=${txHash}`;
+          return true;
+        }
+
+        if (status.status === 'failed') {
+          showError('Transaction failed');
+          return false;
+        }
+      }
+
+      if (attempts >= maxAttempts) {
+        showError('Transaction confirmation timeout');
+        return false;
+      }
+
+      setTimeout(poll, 5000);
+    };
+
+    poll();
+  }
+
+  // ========== Event Handlers ==========
+  connectBtn.addEventListener('click', async () => {
+    hideError();
+    connectBtn.disabled = true;
+    connectBtn.textContent = 'Connecting...';
+
+    const account = await connectMetaMask();
+    if (account) {
+      connectedWallet = account;
+      walletAddress.textContent = formatAddress(account);
+      metamaskStatus.classList.remove('hidden');
+      connectBtn.classList.add('hidden');
+      donateBtn.classList.remove('hidden');
+
+      // Check network
+      const network = await getNetwork();
+      if (network !== BASE_CHAIN_ID) {
+        showError('Please switch to Base network');
+      }
+    }
+
+    connectBtn.disabled = false;
+    if (!connectedWallet) {
+      connectBtn.textContent = 'Connect MetaMask';
+    }
+  });
+
+  donateBtn.addEventListener('click', async () => {
+    const amount = parseFloat(document.getElementById('final-amount').value);
+
+    if (!amount || amount <= 0) {
+      showError('Please select an amount');
+      return;
+    }
+
+    if (!connectedWallet) {
+      showError('Please connect your MetaMask wallet first');
+      return;
+    }
+
+    // Validate form
+    const form = document.getElementById('donor-form');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    // Collect donor info
+    const donorInfo = {
+      first_name: document.getElementById('first-name').value,
+      last_name: document.getElementById('last-name').value,
+      email: document.getElementById('email').value,
+      mobile: document.getElementById('mobile').value,
+      address: document.getElementById('address').value,
+      city: document.getElementById('city').value,
+      state: document.getElementById('state').value,
+      country: document.getElementById('country').value,
+      postal_code: document.getElementById('postal-code').value,
+      message: document.getElementById('message').value,
+      org: document.getElementById('org').value,
+      frequency: document.getElementById('donation-frequency').value,
+    };
+
+    // Disable button
+    donateBtn.disabled = true;
+    donateBtn.textContent = 'Processing...';
+
+    try {
+      const result = await sendUSDCTransfer(amount, donorInfo);
+
+      if (result.success) {
+        // Show transaction status
+        transactionStatus.classList.remove('hidden');
+        txHashEl.textContent = result.transaction_hash;
+        txConfirmationsEl.textContent = result.confirmations;
+        txRequiredEl.textContent = result.required_confirmations;
+        basescanLink.href = `https://basescan.org/tx/${result.transaction_hash}`;
+
+        // Poll for status
+        waitForConfirmation(result.transaction_hash, (status) => {
+          txConfirmationsEl.textContent = status.confirmations;
+          txRequiredEl.textContent = status.required_confirmations;
+        });
+      } else {
+        showError('Payment failed: ' + result.error);
+        donateBtn.disabled = false;
+        donateBtn.textContent = 'Donate with USDC';
+      }
+    } catch (error) {
+      showError('Error: ' + error.message);
+      donateBtn.disabled = false;
+      donateBtn.textContent = 'Donate with USDC';
+    }
+  });
+
+  // Listen for network changes
+  if (window.ethereum) {
+    window.ethereum.on('chainChanged', (chainId) => {
+      const networkId = parseInt(chainId, 16);
+      if (networkId !== BASE_CHAIN_ID && connectedWallet) {
+        showError('Please switch to Base network');
+      } else {
+        hideError();
+      }
+    });
+
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length === 0) {
+        connectedWallet = null;
+        metamaskStatus.classList.add('hidden');
+        connectBtn.classList.remove('hidden');
+        donateBtn.classList.add('hidden');
+      } else {
+        connectedWallet = accounts[0];
+        walletAddress.textContent = formatAddress(connectedWallet);
+      }
+    });
+  }
+
+  // ========== Amount + Frequency UI ==========
+  (function () {
+    const amountButtons = document.querySelectorAll(".donation-btn");
+    const customAmount = document.getElementById("custom-amount");
+    const finalAmount = document.getElementById("final-amount");
+    const amountDisplay = document.getElementById("amount-display");
+    const freqButtons = document.querySelectorAll(".freq-btn");
+    const donationFreq = document.getElementById("donation-frequency");
+
+    const sendHeight = () => {
+      const h = document.documentElement.scrollHeight || document.body.scrollHeight;
+      window.parent.postMessage({ type: "donate-widget-height", height: Math.ceil(h) }, "*");
+    };
+
+    // Amount selection
+    amountButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        finalAmount.value = btn.dataset.amount;
+        amountDisplay.value = Number(btn.dataset.amount).toFixed(2);
+        customAmount.value = "";
+        amountButtons.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
+        btn.classList.add("bg-blue-600", "text-white");
+        sendHeight();
+      });
+    });
+
+    customAmount.addEventListener("input", () => {
+      finalAmount.value = customAmount.value;
+      amountDisplay.value = (Number(customAmount.value || 0)).toFixed(2);
+      amountButtons.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
+      sendHeight();
+    });
+
+    // Frequency selection
+    freqButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        donationFreq.value = btn.dataset.frequency;
+        freqButtons.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
+        btn.classList.add("bg-blue-600", "text-white");
+        sendHeight();
+      });
+    });
+
+    // Defaults: $25 One Time
+    document.querySelector(".donation-btn[data-amount='25']").click();
+    document.querySelector(".freq-btn[data-frequency='one_time']").click();
+
+    // Auto-fit height
+    window.addEventListener("load", () => {
+      sendHeight();
+      setTimeout(sendHeight, 300);
+      setTimeout(sendHeight, 1000);
+    });
+    window.addEventListener("resize", sendHeight);
+    new MutationObserver(() => sendHeight()).observe(document.body, {
+      subtree: true, childList: true, attributes: true
+    });
+  })();
+</script>
+
+</body>
+</html>
+

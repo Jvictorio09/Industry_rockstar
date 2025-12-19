@@ -44,6 +44,21 @@ def widget(request):
     }
     return render(request, "solutions_for_change.html", ctx)
 
+@xframe_options_exempt
+@ensure_csrf_cookie
+def widget_metamask(request):
+    """MetaMask donation widget"""
+    ctx = {
+        "org": request.GET.get("org", "solutions-for-change"),
+    }
+    return render(request, "solutions_for_change_metamask.html", ctx)
+
+@xframe_options_exempt
+@ensure_csrf_cookie
+def web3_payment(request):
+    """Web3 payment portal for Tanya's client"""
+    return render(request, "web3_payment.html")
+
 
 def _verify_recaptcha(token: str) -> bool:
     secret = getattr(settings, "RECAPTCHA_SECRET_KEY", "")

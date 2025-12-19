@@ -13,4 +13,10 @@ urlpatterns = [
     path("stripe/webhook/", views.stripe_webhook, name="stripe_webhook"),
     path("donate/success/", TemplateView.as_view(template_name="donate_success.html"), name="donate_success"),
     path("donate/cancel/", TemplateView.as_view(template_name="donate_cancel.html"), name="donate_cancel"),
+    
+    # MetaMask donation widget
+    path("donate/widget/metamask/", views.widget_metamask, name="donation_widget_metamask"),
+    
+    # Web3 payment portal (Tanya's client)
+    path("payment/", views.web3_payment, name="web3_payment"),
 ]
