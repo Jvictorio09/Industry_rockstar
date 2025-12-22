@@ -1,0 +1,31 @@
+<!-- 
+  Web3 Payment Widget - Copy & Paste Embed Code
+  Domain: https://industryrockstar-production.up.railway.app
+-->
+
+<!-- Container (optional - customize as needed) -->
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+  
+  <!-- Payment Widget Iframe -->
+  <iframe 
+    id="web3-payment-iframe"
+    src="https://industryrockstar-production.up.railway.app/payment/"
+    title="Web3 Payment Widget"
+    scrolling="no"
+    style="width: 100%; min-height: 600px; border: none; border-radius: 12px;">
+  </iframe>
+  
+</div>
+
+<!-- Auto-Resize Script (REQUIRED) -->
+<script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'web3-payment-height') {
+      const iframe = document.getElementById('web3-payment-iframe');
+      if (iframe) {
+        iframe.style.height = event.data.height + 'px';
+      }
+    }
+  });
+</script>
+

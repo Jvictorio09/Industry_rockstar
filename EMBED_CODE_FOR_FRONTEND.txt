@@ -1,0 +1,77 @@
+═══════════════════════════════════════════════════════════════
+  WEB3 PAYMENT WIDGET - EMBED CODE FOR FRONTEND TEAM
+═══════════════════════════════════════════════════════════════
+
+DOMAIN: https://industryrockstar-production.up.railway.app
+WIDGET URL: https://industryrockstar-production.up.railway.app/payment/
+
+═══════════════════════════════════════════════════════════════
+  COPY & PASTE THIS CODE:
+═══════════════════════════════════════════════════════════════
+
+<iframe 
+  id="web3-payment-iframe"
+  src="https://industryrockstar-production.up.railway.app/payment/"
+  title="Web3 Payment Widget"
+  scrolling="no"
+  style="width: 100%; min-height: 600px; border: none; border-radius: 12px;">
+</iframe>
+
+<script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'web3-payment-height') {
+      document.getElementById('web3-payment-iframe').style.height = event.data.height + 'px';
+    }
+  });
+</script>
+
+═══════════════════════════════════════════════════════════════
+  WITH CONTAINER (OPTIONAL):
+═══════════════════════════════════════════════════════════════
+
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+  <iframe 
+    id="web3-payment-iframe"
+    src="https://industryrockstar-production.up.railway.app/payment/"
+    title="Web3 Payment Widget"
+    scrolling="no"
+    style="width: 100%; min-height: 600px; border: none; border-radius: 12px;">
+  </iframe>
+</div>
+
+<script>
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'web3-payment-height') {
+      document.getElementById('web3-payment-iframe').style.height = event.data.height + 'px';
+    }
+  });
+</script>
+
+═══════════════════════════════════════════════════════════════
+  FEATURES:
+═══════════════════════════════════════════════════════════════
+
+✅ Auto-resizing iframe
+✅ Three payment options:
+   - Course Payment: $4,995 USDC
+   - Supplier Listing: 100 USDC/year
+   - Custom Amount: Any amount (min 0.01 USDC)
+✅ Mobile responsive
+✅ Real-time transaction updates
+
+═══════════════════════════════════════════════════════════════
+  REQUIREMENTS:
+═══════════════════════════════════════════════════════════════
+
+- HTTPS (already configured)
+- Modern browser
+- MetaMask extension (for users making payments)
+
+═══════════════════════════════════════════════════════════════
+  TEST URL:
+═══════════════════════════════════════════════════════════════
+
+https://industryrockstar-production.up.railway.app/payment/
+
+═══════════════════════════════════════════════════════════════
+
