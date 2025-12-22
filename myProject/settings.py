@@ -158,3 +158,6 @@ RECEIVER_WALLET = os.environ.get("RECEIVER_WALLET", "0x918e03d7c59d61b6505fed486
 USDC_CONTRACT_ADDRESS = os.environ.get("USDC_CONTRACT_ADDRESS", "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913")
 USDC_DECIMALS = int(os.environ.get("USDC_DECIMALS", "6"))
 REQUIRED_CONFIRMATIONS = int(os.environ.get("REQUIRED_CONFIRMATIONS", "2"))
+
+# Webhook Configuration
+PAYMENT_WEBHOOK_URL = os.environ.get("PAYMENT_WEBHOOK_URL", "https://services.leadconnectorhq.com/hooks/QHdTN3veuJ2AYB8f9dQt/webhook-trigger/ca7e5231-a2af-4f8b-8d0c-59ea1a9d364f")

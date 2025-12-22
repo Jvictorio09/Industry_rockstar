@@ -12,6 +12,7 @@ class TokenPayment(models.Model):
     PAYMENT_TYPE_CHOICES = [
         ('course', 'Course Payment'),
         ('supplier', 'Supplier Listing'),
+        ('custom', 'Custom Amount'),
     ]
     
     # Transaction Details

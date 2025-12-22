@@ -193,6 +193,7 @@ from django.core.cache import cache
 from django.utils import timezone
 from .models import TokenPayment
 from .services.web3_service import Web3Service
+from .services.webhook_service import send_payment_webhook
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -306,9 +307,12 @@ def verify_token_transaction(request):
         
         # Check if already confirmed
         if payment.confirmations >= getattr(settings, 'REQUIRED_CONFIRMATIONS', 2):
-            payment.status = 'confirmed'
-            payment.confirmed_at = timezone.now()
-            payment.save()
+            if payment.status != 'confirmed':
+                payment.status = 'confirmed'
+                payment.confirmed_at = timezone.now()
+                payment.save()
+                # Send webhook notification
+                send_payment_webhook(payment)
         
         return JsonResponse({
             'success': True,
@@ -345,6 +349,8 @@ def payment_status(request, tx_hash):
                         payment.status = 'confirmed'
                         payment.confirmed_at = timezone.now()
                         payment.save()
+                        # Send webhook notification
+                        send_payment_webhook(payment)
         except Exception as e:
             import logging
             logger = logging.getLogger(__name__)

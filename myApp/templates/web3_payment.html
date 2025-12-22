@@ -258,7 +258,7 @@
             
             <!-- Payment Type Selection -->
             <div class="mb-6">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                 <button type="button" id="course-payment-btn" class="payment-type-btn crypto-card text-gray-900 p-8 rounded-xl text-left hover:scale-105 transition-transform">
                   <div class="flex items-start justify-between mb-4">
                     <div>
@@ -290,6 +290,33 @@
                     <p class="text-gray-600 text-base mt-2">Per Year</p>
                   </div>
                 </button>
+                
+                <button type="button" id="custom-amount-btn" class="payment-type-btn crypto-card text-gray-900 p-8 rounded-xl text-left hover:scale-105 transition-transform">
+                  <div class="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 class="text-2xl font-bold mb-2 text-gray-900">Custom Amount</h3>
+                      <p class="text-gray-600 text-base">Enter your amount</p>
+                    </div>
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div class="mt-6">
+                    <p class="text-3xl font-black gradient-text mb-2">Custom</p>
+                    <p class="text-gray-600 text-base mt-2">USDC</p>
+                  </div>
+                </button>
+              </div>
+              
+              <!-- Custom Amount Input (hidden by default) -->
+              <div id="custom-amount-field" class="hidden mb-4">
+                <label class="block text-gray-700 text-base font-semibold mb-3">Enter Amount (USDC)*</label>
+                <div class="relative">
+                  <input type="number" id="custom-amount-input" min="0.01" step="0.01" placeholder="0.00"
+                         class="input-field w-full px-5 py-4 rounded-xl text-gray-900 placeholder-gray-400 text-base pr-20">
+                  <span class="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600 font-semibold">USDC</span>
+                </div>
+                <p class="text-gray-500 text-sm mt-2">Minimum: 0.01 USDC</p>
               </div>
               
               <div class="mt-6 p-6 crypto-card rounded-xl">
@@ -442,7 +469,7 @@
   // ========== State ==========
   let connectedWallet = null;
   let selectedAmount = 0;
-  let selectedPaymentType = null; // 'course' or 'supplier'
+  let selectedPaymentType = null; // 'course', 'supplier', or 'custom'
   
   // Payment configurations
   const PAYMENT_TYPES = {
@@ -457,6 +484,12 @@
       amount: 100,
       currency: 'USDC',
       display: '100 USDC'
+    },
+    custom: {
+      name: 'Custom Amount',
+      amount: 0,
+      currency: 'USDC',
+      display: 'Custom USDC'
     }
   };
 
@@ -470,6 +503,9 @@
   const paymentForm = document.getElementById('payment-form');
   const coursePaymentBtn = document.getElementById('course-payment-btn');
   const supplierListingBtn = document.getElementById('supplier-listing-btn');
+  const customAmountBtn = document.getElementById('custom-amount-btn');
+  const customAmountField = document.getElementById('custom-amount-field');
+  const customAmountInput = document.getElementById('custom-amount-input');
   const selectedPaymentTypeEl = document.getElementById('selected-payment-type');
   const selectedAmountEl = document.getElementById('selected-amount');
   const supplierFields = document.getElementById('supplier-fields');
@@ -507,33 +543,68 @@
     selectedPaymentType = type;
     const payment = PAYMENT_TYPES[type];
     
-    selectedAmount = payment.amount;
-    selectedPaymentTypeEl.textContent = payment.name;
-    selectedAmountEl.textContent = payment.display;
+    // Reset all button states
+    coursePaymentBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+    coursePaymentBtn.classList.add('crypto-card');
+    supplierListingBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+    supplierListingBtn.classList.add('crypto-card');
+    customAmountBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+    customAmountBtn.classList.add('crypto-card');
     
-    // Update payment button text
+    // Hide/show fields
+    supplierFields.classList.add('hidden');
+    companyNameInput.removeAttribute('required');
+    customAmountField.classList.add('hidden');
+    customAmountInput.removeAttribute('required');
+    
     if (type === 'course') {
+      selectedAmount = payment.amount;
+      selectedPaymentTypeEl.textContent = payment.name;
+      selectedAmountEl.textContent = payment.display;
       payBtnText.textContent = `Pay $4,995 USDC`;
-    } else {
-      payBtnText.textContent = `Pay 100 USDC`;
-    }
-    
-    // Update button states
-    if (type === 'course') {
+      
       coursePaymentBtn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
       coursePaymentBtn.classList.remove('crypto-card');
-      supplierListingBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
-      supplierListingBtn.classList.add('crypto-card');
-      supplierFields.classList.add('hidden');
-      companyNameInput.removeAttribute('required');
-    } else {
+    } else if (type === 'supplier') {
+      selectedAmount = payment.amount;
+      selectedPaymentTypeEl.textContent = payment.name;
+      selectedAmountEl.textContent = payment.display;
+      payBtnText.textContent = `Pay 100 USDC`;
+      
       supplierListingBtn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
       supplierListingBtn.classList.remove('crypto-card');
-      coursePaymentBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
-      coursePaymentBtn.classList.add('crypto-card');
       supplierFields.classList.remove('hidden');
       companyNameInput.setAttribute('required', 'required');
+    } else if (type === 'custom') {
+      selectedAmount = 0; // Will be set from input
+      selectedPaymentTypeEl.textContent = payment.name;
+      selectedAmountEl.textContent = 'Enter amount below';
+      payBtnText.textContent = `Pay USDC`;
+      
+      customAmountBtn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+      customAmountBtn.classList.remove('crypto-card');
+      customAmountField.classList.remove('hidden');
+      customAmountInput.setAttribute('required', 'required');
+      customAmountInput.focus();
     }
+  }
+  
+  // Update custom amount when input changes
+  if (customAmountInput) {
+    customAmountInput.addEventListener('input', (e) => {
+      if (selectedPaymentType === 'custom') {
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value) && value > 0) {
+          selectedAmount = value;
+          selectedAmountEl.textContent = `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`;
+          payBtnText.textContent = `Pay ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`;
+        } else {
+          selectedAmount = 0;
+          selectedAmountEl.textContent = 'Enter amount below';
+          payBtnText.textContent = `Pay USDC`;
+        }
+      }
+    });
   }
 
   // ========== MetaMask Functions ==========
@@ -825,6 +896,10 @@
   supplierListingBtn.addEventListener('click', () => {
     selectPaymentType('supplier');
   });
+  
+  customAmountBtn.addEventListener('click', () => {
+    selectPaymentType('custom');
+  });
 
   // Payment button
   payBtn.addEventListener('click', async () => {
@@ -834,8 +909,23 @@
     }
 
     if (selectedAmount <= 0) {
-      showError('Please select a payment type');
+      if (selectedPaymentType === 'custom') {
+        showError('Please enter a valid custom amount (minimum 0.01 USDC)');
+      } else {
+        showError('Please select a payment type');
+      }
       return;
+    }
+    
+    // Validate custom amount
+    if (selectedPaymentType === 'custom') {
+      const customValue = parseFloat(customAmountInput.value);
+      if (isNaN(customValue) || customValue < 0.01) {
+        showError('Please enter a valid amount (minimum 0.01 USDC)');
+        customAmountInput.focus();
+        return;
+      }
+      selectedAmount = customValue;
     }
 
     if (!connectedWallet) {
