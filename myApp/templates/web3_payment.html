@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Web3 Payment Portal</title>
+  <title>Web3 Payment Portal | Secure USDC Payments</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
@@ -14,7 +14,7 @@
     }
     
     body {
-      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+      background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 50%, #f0f0f5 100%);
       min-height: 100vh;
     }
     
@@ -26,9 +26,10 @@
     }
     
     .glass-effect {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
     .glow-effect {
@@ -63,21 +64,22 @@
     
     .grid-pattern {
       background-image: 
-        linear-gradient(rgba(102, 126, 234, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(102, 126, 234, 0.1) 1px, transparent 1px);
+        linear-gradient(rgba(102, 126, 234, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(102, 126, 234, 0.05) 1px, transparent 1px);
       background-size: 50px 50px;
     }
     
     .crypto-card {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-      border: 1px solid rgba(102, 126, 234, 0.3);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(250, 250, 255, 0.9) 100%);
+      border: 2px solid rgba(102, 126, 234, 0.2);
       transition: all 0.3s ease;
     }
     
     .crypto-card:hover {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-      border-color: rgba(102, 126, 234, 0.5);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(245, 245, 255, 1) 100%);
+      border-color: rgba(102, 126, 234, 0.4);
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
     }
     
     .btn-primary {
@@ -92,16 +94,77 @@
     }
     
     .input-field {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
+      color: #000000 !important;
+      font-size: 16px;
+    }
+    
+    .input-field::placeholder {
+      color: rgba(0, 0, 0, 0.4);
+      font-size: 16px;
     }
     
     .input-field:focus {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(102, 126, 234, 0.5);
+      background: rgba(255, 255, 255, 1);
+      border-color: rgba(102, 126, 234, 0.6);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+      color: #000000;
+    }
+    
+    /* Improve text readability */
+    body {
+      color: #1a1a1a;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    p, span, label {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    
+    .text-sm {
+      font-size: 14px !important;
+    }
+    
+    .text-xs {
+      font-size: 13px !important;
+    }
+    
+    .text-lg {
+      font-size: 18px !important;
+    }
+    
+    .text-xl {
+      font-size: 20px !important;
+    }
+    
+    .text-2xl {
+      font-size: 24px !important;
+    }
+    
+    .text-3xl {
+      font-size: 30px !important;
+    }
+    
+    .text-4xl {
+      font-size: 36px !important;
+    }
+    
+    .text-5xl {
+      font-size: 48px !important;
+    }
+    
+    .text-6xl {
+      font-size: 60px !important;
     }
     
     .status-badge {
@@ -131,6 +194,11 @@
       color: #10b981;
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
+    
+    /* Ensure hidden class works with Tailwind */
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body class="grid-pattern">
@@ -139,45 +207,45 @@
       
       <!-- Header -->
       <div class="text-center mb-8 floating">
-        <h1 class="text-5xl sm:text-6xl font-black mb-4">
-          <span class="gradient-text">Web3</span>
-          <span class="text-white">Payment</span>
-        </h1>
-        <p class="text-gray-400 text-lg">Secure, decentralized payments on Base</p>
+      <h1 class="text-5xl sm:text-6xl font-black mb-6">
+        <span class="gradient-text">Web3</span>
+        <span class="text-gray-900">Payment</span>
+      </h1>
+      <p class="text-gray-700 text-xl mb-2">Secure, decentralized payments on Base</p>
       </div>
 
       <!-- Main Payment Card -->
       <div class="glass-effect rounded-3xl p-8 sm:p-10 glow-effect">
         
         <!-- Wallet Connection Status -->
-        <div id="wallet-status" class="mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold text-white">Wallet Connection</h2>
-            <div id="connection-badge" class="status-badge status-pending">
-              <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-              <span>Not Connected</span>
+        <div id="wallet-status" class="mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Wallet Connection</h2>
+            <div id="connection-badge" class="status-badge status-pending text-base">
+              <div class="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+              <span class="font-semibold text-gray-800">Not Connected</span>
             </div>
           </div>
           
-          <button id="connect-btn" class="w-full btn-primary text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-3 pulse-glow">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <button id="connect-btn" class="w-full btn-primary text-white py-5 rounded-xl font-bold text-lg flex items-center justify-center gap-3 pulse-glow shadow-lg">
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            Connect MetaMask
+            <span class="text-lg">Connect MetaMask</span>
           </button>
           
-          <div id="wallet-info" class="hidden mt-4 p-4 crypto-card rounded-xl">
+          <div id="wallet-info" class="hidden mt-6 p-6 crypto-card rounded-xl">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-400 text-sm mb-1">Connected Wallet</p>
-                <p id="wallet-address" class="text-white font-mono text-sm"></p>
+                <p class="text-gray-600 text-base mb-2 font-medium">Connected Wallet</p>
+                <p id="wallet-address" class="text-gray-900 font-mono text-lg font-semibold"></p>
               </div>
               <div class="text-right">
-                <p class="text-gray-400 text-sm mb-1">Network</p>
-                <p id="network-name" class="text-white font-semibold">Base</p>
+                <p class="text-gray-600 text-base mb-2 font-medium">Network</p>
+                <p id="network-name" class="text-gray-900 font-bold text-lg">Base</p>
               </div>
             </div>
           </div>
@@ -185,69 +253,107 @@
 
         <!-- Payment Form -->
         <div id="payment-form" class="hidden">
-          <div class="mb-6">
-            <h2 class="text-xl font-bold text-white mb-4">Payment Details</h2>
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Select Payment Type</h2>
             
-            <!-- Amount Selection -->
+            <!-- Payment Type Selection -->
             <div class="mb-6">
-              <label class="block text-gray-300 text-sm font-medium mb-3">Amount (USDC)</label>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="25">$25</button>
-                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="50">$50</button>
-                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="100">$100</button>
-                <button type="button" class="amount-btn crypto-card text-white py-3 rounded-xl font-semibold" data-amount="250">$250</button>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <button type="button" id="course-payment-btn" class="payment-type-btn crypto-card text-gray-900 p-8 rounded-xl text-left hover:scale-105 transition-transform">
+                  <div class="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 class="text-2xl font-bold mb-2 text-gray-900">Course Payment</h3>
+                      <p class="text-gray-600 text-base">Full course access</p>
+                    </div>
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                  </div>
+                  <div class="mt-6">
+                    <p class="text-4xl font-black gradient-text mb-2">$4,995</p>
+                    <p class="text-gray-600 text-base mt-2">USD • Payable in USDC</p>
+                  </div>
+                </button>
+                
+                <button type="button" id="supplier-listing-btn" class="payment-type-btn crypto-card text-gray-900 p-8 rounded-xl text-left hover:scale-105 transition-transform">
+                  <div class="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 class="text-2xl font-bold mb-2 text-gray-900">Supplier Listing</h3>
+                      <p class="text-gray-600 text-base">Directory listing fee</p>
+                    </div>
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                  </div>
+                  <div class="mt-6">
+                    <p class="text-4xl font-black gradient-text mb-2">100 USDC</p>
+                    <p class="text-gray-600 text-base mt-2">Per Year</p>
+                  </div>
+                </button>
               </div>
-              <div class="relative">
-                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-semibold">$</div>
-                <input type="number" id="custom-amount" placeholder="Custom amount" min="1" step="0.01"
-                       class="input-field w-full pl-10 pr-4 py-4 rounded-xl text-white placeholder-gray-500">
-              </div>
-              <div class="mt-2 text-center">
-                <span class="text-gray-400 text-sm">Selected: </span>
-                <span id="selected-amount" class="text-white font-bold text-lg">$0.00</span>
+              
+              <div class="mt-6 p-6 crypto-card rounded-xl">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-base mb-2 font-medium">Selected Payment</p>
+                    <p id="selected-payment-type" class="text-gray-900 font-bold text-lg">None selected</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-gray-600 text-base mb-2 font-medium">Amount</p>
+                    <p id="selected-amount" class="text-gray-900 font-black text-2xl">$0.00</p>
+                  </div>
+                </div>
               </div>
             </div>
 
             <!-- Customer Information -->
-            <div class="space-y-4 mb-6">
-              <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-6 mb-8">
+              <h3 class="text-xl font-bold text-gray-900 mb-4">Customer Information</h3>
+              
+              <div class="grid grid-cols-2 gap-6">
                 <div>
-                  <label class="block text-gray-300 text-sm font-medium mb-2">First Name*</label>
+                  <label class="block text-gray-700 text-base font-semibold mb-3">First Name*</label>
                   <input type="text" id="first-name" required
-                         class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+                         class="input-field w-full px-5 py-4 rounded-xl text-gray-900 placeholder-gray-400 text-base">
                 </div>
                 <div>
-                  <label class="block text-gray-300 text-sm font-medium mb-2">Last Name*</label>
+                  <label class="block text-gray-700 text-base font-semibold mb-3">Last Name*</label>
                   <input type="text" id="last-name" required
-                         class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+                         class="input-field w-full px-5 py-4 rounded-xl text-gray-900 placeholder-gray-400 text-base">
                 </div>
               </div>
               
               <div>
-                <label class="block text-gray-300 text-sm font-medium mb-2">Email*</label>
+                <label class="block text-gray-700 text-base font-semibold mb-3">Email*</label>
                 <input type="email" id="email" required
-                       class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+                       class="input-field w-full px-5 py-4 rounded-xl text-gray-900 placeholder-gray-400 text-base">
               </div>
               
               <div>
-                <label class="block text-gray-300 text-sm font-medium mb-2">Phone</label>
+                <label class="block text-gray-700 text-base font-semibold mb-3">Phone</label>
                 <input type="tel" id="phone"
-                       class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500">
+                       class="input-field w-full px-5 py-4 rounded-xl text-gray-900 placeholder-gray-400 text-base">
+              </div>
+              
+              <div id="supplier-fields" class="hidden">
+                <label class="block text-gray-700 text-base font-semibold mb-3">Company/Business Name*</label>
+                <input type="text" id="company-name"
+                       class="input-field w-full px-5 py-4 rounded-xl text-gray-900 placeholder-gray-400 text-base">
               </div>
               
               <div>
-                <label class="block text-gray-300 text-sm font-medium mb-2">Notes (Optional)</label>
-                <textarea id="notes" rows="3"
-                          class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 resize-none"></textarea>
+                <label class="block text-gray-700 text-base font-semibold mb-3">Notes (Optional)</label>
+                <textarea id="notes" rows="4"
+                          class="input-field w-full px-5 py-4 rounded-xl text-gray-900 placeholder-gray-400 resize-none text-base"></textarea>
               </div>
             </div>
 
             <!-- Payment Button -->
-            <button id="pay-btn" class="w-full btn-primary text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="pay-btn" class="w-full btn-primary text-white py-5 rounded-xl font-bold text-xl flex items-center justify-center gap-3 shadow-lg">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              Pay with USDC
+              <span id="pay-btn-text" class="text-xl">Pay with USDC</span>
             </button>
           </div>
         </div>
@@ -256,30 +362,30 @@
         <div id="transaction-status" class="hidden">
           <div class="crypto-card rounded-xl p-6">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-bold text-white">Transaction Status</h3>
+              <h3 class="text-lg font-bold text-gray-900">Transaction Status</h3>
               <div id="tx-status-badge" class="status-badge status-pending">
-                <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                <span>Pending</span>
+                <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                <span class="text-gray-800">Pending</span>
               </div>
             </div>
             
             <div class="space-y-3">
               <div>
-                <p class="text-gray-400 text-sm mb-1">Transaction Hash</p>
-                <a id="tx-hash-link" href="#" target="_blank" class="text-white font-mono text-sm break-all hover:text-purple-400">
+                <p class="text-gray-600 text-sm mb-1">Transaction Hash</p>
+                <a id="tx-hash-link" href="#" target="_blank" class="text-gray-900 font-mono text-sm break-all hover:text-purple-600">
                   <span id="tx-hash"></span>
                 </a>
               </div>
               
               <div class="flex items-center justify-between">
-                <span class="text-gray-400 text-sm">Confirmations</span>
-                <span class="text-white font-semibold">
+                <span class="text-gray-600 text-sm">Confirmations</span>
+                <span class="text-gray-900 font-semibold">
                   <span id="tx-confirmations">0</span> / <span id="tx-required">2</span>
                 </span>
               </div>
               
               <div class="mt-4">
-                <div class="w-full bg-gray-700 rounded-full h-2">
+                <div class="w-full bg-gray-200 rounded-full h-2">
                   <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                 </div>
               </div>
@@ -288,13 +394,13 @@
         </div>
 
         <!-- Error Message -->
-        <div id="error-message" class="hidden mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
-          <p id="error-text" class="text-red-400 text-sm"></p>
+        <div id="error-message" class="hidden mt-4 p-4 bg-red-100 border-2 border-red-300 rounded-xl">
+          <p id="error-text" class="text-red-800 text-base font-medium"></p>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="text-center mt-8 text-gray-500 text-sm">
+      <div class="text-center mt-8 text-gray-600 text-base">
         <p>Powered by Base Network • Secured by Blockchain</p>
       </div>
     </div>
@@ -336,6 +442,23 @@
   // ========== State ==========
   let connectedWallet = null;
   let selectedAmount = 0;
+  let selectedPaymentType = null; // 'course' or 'supplier'
+  
+  // Payment configurations
+  const PAYMENT_TYPES = {
+    course: {
+      name: 'Course Payment',
+      amount: 4995,
+      currency: 'USD',
+      display: '$4,995 USD'
+    },
+    supplier: {
+      name: 'Supplier Listing',
+      amount: 100,
+      currency: 'USDC',
+      display: '100 USDC'
+    }
+  };
 
   // ========== UI Elements ==========
   const connectBtn = document.getElementById('connect-btn');
@@ -345,9 +468,12 @@
   const walletAddress = document.getElementById('wallet-address');
   const networkName = document.getElementById('network-name');
   const paymentForm = document.getElementById('payment-form');
-  const amountButtons = document.querySelectorAll('.amount-btn');
-  const customAmount = document.getElementById('custom-amount');
+  const coursePaymentBtn = document.getElementById('course-payment-btn');
+  const supplierListingBtn = document.getElementById('supplier-listing-btn');
+  const selectedPaymentTypeEl = document.getElementById('selected-payment-type');
   const selectedAmountEl = document.getElementById('selected-amount');
+  const supplierFields = document.getElementById('supplier-fields');
+  const companyNameInput = document.getElementById('company-name');
   const payBtn = document.getElementById('pay-btn');
   const transactionStatus = document.getElementById('transaction-status');
   const txStatusBadge = document.getElementById('tx-status-badge');
@@ -375,20 +501,39 @@
     errorMessage.classList.add('hidden');
   }
 
-  function updateAmount(amount) {
-    selectedAmount = parseFloat(amount) || 0;
-    selectedAmountEl.textContent = `$${selectedAmount.toFixed(2)}`;
+  const payBtnText = document.getElementById('pay-btn-text');
+  
+  function selectPaymentType(type) {
+    selectedPaymentType = type;
+    const payment = PAYMENT_TYPES[type];
+    
+    selectedAmount = payment.amount;
+    selectedPaymentTypeEl.textContent = payment.name;
+    selectedAmountEl.textContent = payment.display;
+    
+    // Update payment button text
+    if (type === 'course') {
+      payBtnText.textContent = `Pay $4,995 USDC`;
+    } else {
+      payBtnText.textContent = `Pay 100 USDC`;
+    }
     
     // Update button states
-    amountButtons.forEach(btn => {
-      if (btn.dataset.amount == amount) {
-        btn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
-        btn.classList.remove('crypto-card');
-      } else {
-        btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
-        btn.classList.add('crypto-card');
-      }
-    });
+    if (type === 'course') {
+      coursePaymentBtn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+      coursePaymentBtn.classList.remove('crypto-card');
+      supplierListingBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+      supplierListingBtn.classList.add('crypto-card');
+      supplierFields.classList.add('hidden');
+      companyNameInput.removeAttribute('required');
+    } else {
+      supplierListingBtn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+      supplierListingBtn.classList.remove('crypto-card');
+      coursePaymentBtn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
+      coursePaymentBtn.classList.add('crypto-card');
+      supplierFields.classList.remove('hidden');
+      companyNameInput.setAttribute('required', 'required');
+    }
   }
 
   // ========== MetaMask Functions ==========
@@ -397,28 +542,45 @@
   }
 
   async function connectMetaMask() {
+    // Check if MetaMask is installed
     if (!isMetaMaskInstalled()) {
-      showError('MetaMask is not installed. Please install MetaMask to continue.');
-      window.open('https://metamask.io/download/', '_blank');
+      const installConfirm = confirm(
+        'MetaMask is not installed. Would you like to install it?\n\n' +
+        'Click OK to open the download page in a new tab, or Cancel to stay here.'
+      );
+      if (installConfirm) {
+        window.open('https://metamask.io/download/', '_blank');
+      } else {
+        showError('MetaMask is required to make payments. Please install MetaMask and refresh this page.');
+      }
       return null;
     }
 
     try {
+      // Request account access - this will trigger MetaMask popup
+      console.log('Requesting MetaMask accounts...');
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts'
       });
 
+      console.log('MetaMask accounts:', accounts);
+
       if (accounts.length === 0) {
-        throw new Error('No accounts found');
+        showError('No accounts found in MetaMask. Please create or import an account.');
+        return null;
       }
 
       return accounts[0];
     } catch (error) {
       console.error('Error connecting to MetaMask:', error);
       if (error.code === 4001) {
-        showError('Please connect your MetaMask wallet to continue.');
+        // User rejected the connection request
+        showError('Connection rejected. Please approve the connection in MetaMask to continue.');
+      } else if (error.code === -32002) {
+        // Request already pending
+        showError('A connection request is already pending. Please check your MetaMask extension.');
       } else {
-        showError('Failed to connect to MetaMask. Please try again.');
+        showError('Failed to connect to MetaMask: ' + (error.message || 'Unknown error'));
       }
       return null;
     }
@@ -580,11 +742,11 @@
         onUpdate(status);
 
         if (status.status === 'confirmed') {
-          txStatusBadge.className = 'status-badge status-confirmed';
-          txStatusBadge.innerHTML = '<div class="w-2 h-2 bg-green-400 rounded-full"></div><span>Confirmed</span>';
-          progressBar.style.width = '100%';
+            txStatusBadge.className = 'status-badge status-confirmed';
+            txStatusBadge.innerHTML = '<div class="w-2 h-2 bg-green-400 rounded-full"></div><span>Confirmed</span>';
+            progressBar.style.width = '100%';
           setTimeout(() => {
-            window.location.href = `/donate/success/?method=metamask&tx=${txHash}`;
+            window.location.href = `/payment/success/?tx=${txHash}`;
           }, 2000);
           return true;
         }
@@ -609,56 +771,70 @@
   }
 
   // ========== Event Handlers ==========
-  connectBtn.addEventListener('click', async () => {
+  connectBtn.addEventListener('click', async (e) => {
+    e.preventDefault(); // Prevent any default behavior or redirects
+    console.log('Connect button clicked');
     hideError();
     connectBtn.disabled = true;
-    connectBtn.textContent = 'Connecting...';
+    connectBtn.innerHTML = '<span>Connecting...</span>';
 
-    const account = await connectMetaMask();
-    if (account) {
-      connectedWallet = account;
-      walletAddress.textContent = formatAddress(account);
-      networkName.textContent = 'Base';
+    try {
+      const account = await connectMetaMask();
+      console.log('Connected account:', account);
       
-      connectionBadge.className = 'status-badge status-connected';
-      connectionBadge.innerHTML = '<div class="w-2 h-2 bg-green-400 rounded-full"></div><span>Connected</span>';
-      
-      walletInfo.classList.remove('hidden');
-      connectBtn.classList.add('hidden');
-      paymentForm.classList.remove('hidden');
+      if (account) {
+        connectedWallet = account;
+        walletAddress.textContent = formatAddress(account);
+        networkName.textContent = 'Base';
+        
+        connectionBadge.className = 'status-badge status-connected';
+        connectionBadge.innerHTML = '<div class="w-3 h-3 bg-green-500 rounded-full"></div><span class="font-semibold text-gray-800">Connected</span>';
+        
+        walletInfo.classList.remove('hidden');
+        connectBtn.classList.add('hidden');
+        
+        // Show payment form - force display
+        paymentForm.classList.remove('hidden');
+        paymentForm.style.display = 'block';
+        console.log('Payment form should be visible now');
 
-      const network = await getNetwork();
-      if (network !== BASE_CHAIN_ID) {
-        showError('Please switch to Base network');
+        // Check network
+        const network = await getNetwork();
+        if (network !== BASE_CHAIN_ID) {
+          showError('Please switch to Base network in MetaMask');
+        }
+      } else {
+        console.log('Failed to connect account');
+      }
+    } catch (error) {
+      console.error('Error in connect button handler:', error);
+      showError('Error connecting: ' + error.message);
+    } finally {
+      connectBtn.disabled = false;
+      if (!connectedWallet) {
+        connectBtn.innerHTML = '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg><span class="text-lg">Connect MetaMask</span>';
       }
     }
-
-    connectBtn.disabled = false;
-    if (!connectedWallet) {
-      connectBtn.textContent = 'Connect MetaMask';
-    }
   });
 
-  // Amount selection
-  amountButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      updateAmount(btn.dataset.amount);
-      customAmount.value = '';
-    });
+  // Payment type selection
+  coursePaymentBtn.addEventListener('click', () => {
+    selectPaymentType('course');
   });
 
-  customAmount.addEventListener('input', () => {
-    updateAmount(customAmount.value);
-    amountButtons.forEach(b => {
-      b.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-pink-600');
-      b.classList.add('crypto-card');
-    });
+  supplierListingBtn.addEventListener('click', () => {
+    selectPaymentType('supplier');
   });
 
   // Payment button
   payBtn.addEventListener('click', async () => {
+    if (!selectedPaymentType) {
+      showError('Please select a payment type');
+      return;
+    }
+
     if (selectedAmount <= 0) {
-      showError('Please select an amount');
+      showError('Please select a payment type');
       return;
     }
 
@@ -676,12 +852,26 @@
       return;
     }
 
+    // Validate supplier-specific fields
+    if (selectedPaymentType === 'supplier') {
+      const companyName = document.getElementById('company-name').value;
+      if (!companyName) {
+        showError('Please enter your company/business name');
+        return;
+      }
+    }
+
+    // For course payment, convert USD to USDC (1:1 for USDC stablecoin)
+    const amountUSDC = selectedPaymentType === 'course' ? selectedAmount : selectedAmount;
+
     const customerInfo = {
       first_name: firstName,
       last_name: lastName,
       email: email,
       mobile: document.getElementById('phone').value,
       message: document.getElementById('notes').value,
+      company_name: selectedPaymentType === 'supplier' ? document.getElementById('company-name').value : '',
+      payment_type: selectedPaymentType,
       org: 'tanya-client',
       frequency: 'one_time',
     };
@@ -690,7 +880,7 @@
     payBtn.textContent = 'Processing...';
 
     try {
-      const result = await sendUSDCTransfer(selectedAmount, customerInfo);
+      const result = await sendUSDCTransfer(amountUSDC, customerInfo);
 
       if (result.success) {
         paymentForm.classList.add('hidden');
@@ -721,6 +911,70 @@
     }
   });
 
+  // Auto-check for existing connection on page load
+  async function checkExistingConnection() {
+    if (!isMetaMaskInstalled()) {
+      console.log('MetaMask not installed');
+      return;
+    }
+
+    try {
+      // Check if already connected
+      const accounts = await window.ethereum.request({
+        method: 'eth_accounts'
+      });
+
+      console.log('Existing accounts:', accounts);
+
+      if (accounts.length > 0) {
+        // Already connected - update UI
+        connectedWallet = accounts[0];
+        walletAddress.textContent = formatAddress(connectedWallet);
+        networkName.textContent = 'Base';
+        
+        connectionBadge.className = 'status-badge status-connected';
+        connectionBadge.innerHTML = '<div class="w-2 h-2 bg-green-400 rounded-full"></div><span>Connected</span>';
+        
+        walletInfo.classList.remove('hidden');
+        connectBtn.classList.add('hidden');
+        paymentForm.classList.remove('hidden');
+        paymentForm.style.display = 'block';
+        
+        console.log('Form should be visible now');
+        
+        // Force show after a moment
+        setTimeout(() => {
+          paymentForm.classList.remove('hidden');
+          paymentForm.style.display = 'block';
+        }, 100);
+
+        // Check network
+        const network = await getNetwork();
+        if (network !== BASE_CHAIN_ID) {
+          showError('Please switch to Base network');
+        }
+      } else {
+        console.log('No existing connection found');
+      }
+    } catch (error) {
+      console.error('Error checking existing connection:', error);
+      showError('Error checking wallet connection: ' + error.message);
+    }
+  }
+
+  // Check on page load
+  window.addEventListener('load', () => {
+    console.log('Page loaded, checking connection...');
+    checkExistingConnection();
+  });
+  
+  // Also check when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkExistingConnection);
+  } else {
+    checkExistingConnection();
+  }
+
   // Listen for network changes
   if (window.ethereum) {
     window.ethereum.on('chainChanged', (chainId) => {
@@ -743,6 +997,11 @@
       } else {
         connectedWallet = accounts[0];
         walletAddress.textContent = formatAddress(connectedWallet);
+        // Auto-update UI if already connected
+        if (!paymentForm.classList.contains('hidden')) {
+          connectionBadge.className = 'status-badge status-connected';
+          connectionBadge.innerHTML = '<div class="w-2 h-2 bg-green-400 rounded-full"></div><span>Connected</span>';
+        }
       }
     });
   }
@@ -750,4 +1009,5 @@
 
 </body>
 </html>
+
 

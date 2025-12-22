@@ -55,6 +55,29 @@
 
     <!-- Embedded widget -->
 
+    <!-- Tanya's Client Web3 Payment Portal -->
+    <div class="bg-transparent text-white p-8 flex flex-col items-center gap-6 max-w-md mx-auto mt-12">
+      <div class="text-center mb-4">
+        <h2 class="text-2xl font-bold mb-2">Web3 Payment Portal</h2>
+        <p class="text-sm text-gray-300">Course & Supplier Listing Payments</p>
+      </div>
+      
+      <a href="{% url 'web3_payment' %}"
+         class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 hover:from-purple-700 hover:via-pink-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl shadow-lg transition transform hover:scale-105 w-full">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        <span class="font-bold text-lg">Web3 Payment Portal</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      </a>
+      
+      <p class="text-xs text-gray-400 text-center mt-2">
+        Course: $4,995 USDC • Supplier Listing: 100 USDC/year
+      </p>
+    </div>
 
     <!-- Footer note -->
     <div class="flex flex-wrap justify-center gap-3 text-sm text-gray-200">

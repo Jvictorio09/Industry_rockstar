@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment Confirmed | Web3 Payment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .crypto-card {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+    
+    .success-animation {
+      animation: scaleIn 0.5s ease-out;
+    }
+    
+    @keyframes scaleIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="w-full max-w-2xl">
+      
+      <!-- Success Header -->
+      <div class="text-center mb-8 success-animation">
+        <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500">
+          <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-black mb-2">
+          <span class="text-white">Payment</span>
+          <span class="gradient-text"> Confirmed</span>
+        </h1>
+        <p class="text-gray-400 text-lg">Your USDC payment has been successfully processed</p>
+      </div>
+
+      <!-- Payment Receipt Card -->
+      <div class="glass-effect rounded-3xl p-8 sm:p-10 success-animation">
+        
+        <!-- Payment Type Badge -->
+        <div class="mb-6">
+          <div id="payment-type-badge" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold">
+            <span id="payment-type-icon"></span>
+            <span id="payment-type-text"></span>
+          </div>
+        </div>
+
+        <!-- Payment Details -->
+        <div class="space-y-6 mb-8">
+          <!-- Amount -->
+          <div class="crypto-card rounded-xl p-6">
+            <p class="text-gray-400 text-sm mb-2">Amount Paid</p>
+            <p id="payment-amount" class="text-4xl font-black gradient-text"></p>
+            <p class="text-gray-400 text-sm mt-1" id="payment-amount-usd"></p>
+          </div>
+
+          <!-- Transaction Details -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="crypto-card rounded-xl p-4">
+              <p class="text-gray-400 text-sm mb-1">Transaction Hash</p>
+              <a id="tx-hash-link" href="#" target="_blank" class="text-white font-mono text-sm break-all hover:text-purple-400">
+                <span id="tx-hash"></span>
+              </a>
+            </div>
+            
+            <div class="crypto-card rounded-xl p-4">
+              <p class="text-gray-400 text-sm mb-1">Status</p>
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span id="payment-status" class="text-white font-semibold">Confirmed</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Information -->
+          <div class="crypto-card rounded-xl p-6">
+            <h3 class="text-white font-bold mb-4">Payment Details</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-400">Customer Name:</span>
+                <span id="customer-name" class="text-white font-medium"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Email:</span>
+                <span id="customer-email" class="text-white font-medium"></span>
+              </div>
+              <div id="company-row" class="hidden flex justify-between">
+                <span class="text-gray-400">Company:</span>
+                <span id="company-name" class="text-white font-medium"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Payment Date:</span>
+                <span id="payment-date" class="text-white font-medium"></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Network:</span>
+                <span class="text-white font-medium">Base Mainnet</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Token:</span>
+                <span class="text-white font-medium">USDC</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction Link -->
+          <div class="crypto-card rounded-xl p-4">
+            <a id="basescan-link" href="#" target="_blank" 
+               class="flex items-center justify-center gap-2 text-purple-400 hover:text-purple-300 font-medium">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+              View Transaction on Basescan
+            </a>
+          </div>
+        </div>
+
+        <!-- Receipt Notice -->
+        <div class="mt-6 p-4 bg-blue-500/20 border border-blue-500/30 rounded-xl">
+          <p class="text-blue-300 text-sm">
+            <strong>Receipt:</strong> This page serves as your payment confirmation. 
+            Please save this page or take a screenshot for your records. 
+            The transaction is permanently recorded on the Base blockchain.
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a href="/payment/" 
+             class="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition">
+            Make Another Payment
+          </a>
+          <a href="/" 
+             class="flex-1 inline-flex items-center justify-center gap-2 glass-effect text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/10 transition">
+            Return to Home
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center mt-8 text-gray-500 text-sm">
+        <p>Powered by Base Network • Secured by Blockchain</p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Get payment data from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const txHash = urlParams.get('tx');
+  const method = urlParams.get('method');
+
+  // Fetch payment details from backend
+  async function loadPaymentDetails() {
+    if (!txHash) {
+      document.body.innerHTML = '<div class="min-h-screen flex items-center justify-center"><div class="text-white text-center"><h1 class="text-2xl mb-4">Payment Not Found</h1><p class="text-gray-400">Transaction hash is missing.</p></div></div>';
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/crypto/payment-status/${txHash}/`);
+      if (!response.ok) {
+        throw new Error('Payment not found');
+      }
+      
+      const data = await response.json();
+      
+      // Update UI with payment data
+      document.getElementById('tx-hash').textContent = txHash;
+      document.getElementById('tx-hash-link').href = data.basescan_url || `https://basescan.org/tx/${txHash}`;
+      document.getElementById('basescan-link').href = data.basescan_url || `https://basescan.org/tx/${txHash}`;
+      document.getElementById('payment-status').textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+      
+      // Fetch full payment details (we'll need to add an endpoint for this)
+      // For now, use the data we have
+      document.getElementById('payment-amount').textContent = `${data.amount_usdc} USDC`;
+      if (data.amount_usd) {
+        document.getElementById('payment-amount-usd').textContent = `≈ $${parseFloat(data.amount_usd).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} USD`;
+      }
+      
+      // Set payment date
+      document.getElementById('payment-date').textContent = new Date().toLocaleString();
+      
+      // Try to get full payment details from a new endpoint
+      fetch(`/api/crypto/payment-details/${txHash}/`)
+        .then(res => res.json())
+        .then(fullData => {
+          if (fullData.customer_name) {
+            document.getElementById('customer-name').textContent = fullData.customer_name;
+          }
+          if (fullData.email) {
+            document.getElementById('customer-email').textContent = fullData.email;
+          }
+          if (fullData.company_name) {
+            document.getElementById('company-name').textContent = fullData.company_name;
+            document.getElementById('company-row').classList.remove('hidden');
+          }
+          if (fullData.payment_type) {
+            const type = fullData.payment_type;
+            const badge = document.getElementById('payment-type-badge');
+            const icon = document.getElementById('payment-type-icon');
+            const text = document.getElementById('payment-type-text');
+            
+            if (type === 'course') {
+              badge.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 text-purple-300';
+              icon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>';
+              text.textContent = 'Course Payment';
+            } else if (type === 'supplier') {
+              badge.className = 'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300';
+              icon.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>';
+              text.textContent = 'Supplier Listing';
+            }
+          }
+          if (fullData.created_at) {
+            document.getElementById('payment-date').textContent = new Date(fullData.created_at).toLocaleString();
+          }
+        })
+        .catch(err => {
+          console.log('Could not fetch full details, using basic info');
+        });
+      
+    } catch (error) {
+      console.error('Error loading payment details:', error);
+      document.body.innerHTML = '<div class="min-h-screen flex items-center justify-center"><div class="text-white text-center"><h1 class="text-2xl mb-4">Error Loading Payment</h1><p class="text-gray-400">Please try again later.</p></div></div>';
+    }
+  }
+
+  // Load payment details on page load
+  loadPaymentDetails();
+</script>
+
+</body>
+</html>
+
+

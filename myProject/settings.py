@@ -150,3 +150,11 @@ STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 DOMAIN = os.environ.get("DOMAIN", "http://localhost:8000")
+
+# Base Network / USDC Configuration
+CHAIN = os.environ.get("CHAIN", "base")
+BASE_RPC_URL = os.environ.get("BASE_RPC_URL", "")  # From Alchemy (SECRET - must be set)
+RECEIVER_WALLET = os.environ.get("RECEIVER_WALLET", "0x918e03d7c59d61b6505fed486082419941ffd77f")
+USDC_CONTRACT_ADDRESS = os.environ.get("USDC_CONTRACT_ADDRESS", "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913")
+USDC_DECIMALS = int(os.environ.get("USDC_DECIMALS", "6"))
+REQUIRED_CONFIRMATIONS = int(os.environ.get("REQUIRED_CONFIRMATIONS", "2"))

@@ -19,4 +19,12 @@ urlpatterns = [
     
     # Web3 payment portal (Tanya's client)
     path("payment/", views.web3_payment, name="web3_payment"),
+    
+    # Crypto/Token payment API endpoints
+    path("api/crypto/verify-transaction/", views.verify_token_transaction, name="verify_token_transaction"),
+    path("api/crypto/payment-status/<str:tx_hash>/", views.payment_status, name="payment_status"),
+    path("api/crypto/payment-details/<str:tx_hash>/", views.payment_details, name="payment_details"),
+    
+    # Payment success page
+    path("payment/success/", views.payment_success, name="payment_success"),
 ]
