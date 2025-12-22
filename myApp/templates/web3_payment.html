@@ -619,6 +619,74 @@
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
+  function attemptMobileDeepLink() {
+    // Try to open MetaMask app via deep link
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    if (isIOS) {
+      // iOS: Try MetaMask deep link, fallback to App Store
+      const metamaskUrl = 'metamask://wc?uri=' + encodeURIComponent(window.location.href);
+      const appStoreUrl = 'https://apps.apple.com/app/metamask/id1438144202';
+      
+      // Try deep link first
+      window.location.href = metamaskUrl;
+      
+      // If deep link fails, show instructions
+      setTimeout(() => {
+        const useBrowser = confirm(
+          'To connect MetaMask on mobile:\n\n' +
+          'Option 1: Open in MetaMask Browser\n' +
+          '• Open MetaMask app\n' +
+          '• Tap menu (☰) → Browser\n' +
+          '• Navigate to this page\n\n' +
+          'Option 2: Use WalletConnect\n' +
+          '• Install MetaMask if needed\n' +
+          '• This page will connect automatically\n\n' +
+          'Click OK to open MetaMask in App Store, or Cancel to try again.'
+        );
+        if (useBrowser) {
+          window.open(appStoreUrl, '_blank');
+        }
+      }, 1000);
+      
+      showError('Opening MetaMask app... If it doesn\'t open, please use MetaMask mobile browser (menu → Browser).');
+      return null;
+    } else if (isAndroid) {
+      // Android: Try MetaMask deep link, fallback to Play Store
+      const metamaskUrl = 'metamask://wc?uri=' + encodeURIComponent(window.location.href);
+      const playStoreUrl = 'https://play.google.com/store/apps/details?id=io.metamask';
+      
+      // Try deep link first
+      window.location.href = metamaskUrl;
+      
+      // If deep link fails, show instructions
+      setTimeout(() => {
+        const useBrowser = confirm(
+          'To connect MetaMask on mobile:\n\n' +
+          'Option 1: Open in MetaMask Browser\n' +
+          '• Open MetaMask app\n' +
+          '• Tap menu (☰) → Browser\n' +
+          '• Navigate to this page\n\n' +
+          'Option 2: Use WalletConnect\n' +
+          '• Install MetaMask if needed\n' +
+          '• This page will connect automatically\n\n' +
+          'Click OK to open MetaMask in Play Store, or Cancel to try again.'
+        );
+        if (useBrowser) {
+          window.open(playStoreUrl, '_blank');
+        }
+      }, 1000);
+      
+      showError('Opening MetaMask app... If it doesn\'t open, please use MetaMask mobile browser (menu → Browser).');
+      return null;
+    }
+    
+    // Fallback for other mobile devices
+    showError('Please open this page in MetaMask mobile browser. In MetaMask app, tap menu (☰) → Browser, then navigate here.');
+    return null;
+  }
+
   function isMetaMaskInstalled() {
     // On mobile, MetaMask is an app, not a browser extension
     // So we check differently - try to detect if MetaMask mobile browser is being used
@@ -636,11 +704,11 @@
   async function connectMetaMask() {
     const isMobile = isMobileDevice();
     
-    // On mobile, try to connect directly - MetaMask mobile browser injects provider
-    // Don't show "not installed" error on mobile since MetaMask is an app, not extension
+    // On mobile, try to connect - MetaMask mobile browser injects provider
     if (isMobile) {
+      // Always try to connect first - don't check if provider exists
+      // This allows connection if user is in MetaMask mobile browser
       try {
-        // Check if provider is available (MetaMask mobile browser injects it)
         if (typeof window.ethereum !== 'undefined') {
           // Provider available - try to connect
           const accounts = await window.ethereum.request({
@@ -654,9 +722,24 @@
           
           return accounts[0];
         } else {
-          // No provider - user needs to open in MetaMask mobile browser
-          showError('Please open this page in MetaMask mobile browser. In MetaMask app, tap the menu (☰) and select "Browser", then navigate to this page.');
-          return null;
+          // No provider - try deep linking or show instructions
+          // Don't show error immediately, try to help user connect
+          const shouldTryDeepLink = confirm(
+            'MetaMask connection on mobile:\n\n' +
+            'You can connect by:\n' +
+            '1. Opening this page in MetaMask browser (menu → Browser)\n' +
+            '2. Or we can try to open MetaMask app for you\n\n' +
+            'Click OK to try opening MetaMask app, or Cancel to see instructions.'
+          );
+          
+          if (shouldTryDeepLink) {
+            attemptMobileDeepLink();
+            // Return null but don't show error - deep link will handle it
+            return null;
+          } else {
+            showError('To connect: Open MetaMask app → Menu (☰) → Browser → Navigate to this page');
+            return null;
+          }
         }
       } catch (error) {
         console.error('Mobile MetaMask connection error:', error);
@@ -665,7 +748,8 @@
         } else if (error.code === -32002) {
           showError('Connection request already pending. Please check MetaMask.');
         } else {
-          showError('Failed to connect. Please open this page in MetaMask mobile browser.');
+          // Try deep linking as fallback
+          attemptMobileDeepLink();
         }
         return null;
       }
