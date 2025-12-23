@@ -863,6 +863,10 @@
 
   async function getNetwork() {
     try {
+      if (typeof window.ethereum === 'undefined') {
+        console.log('window.ethereum not available');
+        return null;
+      }
       const chainId = await window.ethereum.request({ method: 'eth_chainId' });
       return parseInt(chainId, 16);
     } catch (error) {
@@ -872,6 +876,10 @@
   }
 
   async function switchToBase() {
+    if (typeof window.ethereum === 'undefined') {
+      return false;
+    }
+    
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -928,6 +936,10 @@
   // ========== Transaction Functions ==========
   async function sendUSDCTransfer(amountUSDC, customerInfo) {
     try {
+      if (typeof window.ethereum === 'undefined') {
+        return { success: false, error: 'MetaMask not detected. Please connect your wallet.' };
+      }
+      
       const onBase = await ensureBaseNetwork();
       if (!onBase) {
         return { success: false, error: 'Please switch to Base network' };
@@ -1215,8 +1227,22 @@
 
   // Auto-check for existing connection on page load
   async function checkExistingConnection() {
-    if (!isMetaMaskInstalled()) {
-      console.log('MetaMask not installed');
+    // Check if window.ethereum exists before trying to use it
+    if (typeof window.ethereum === 'undefined') {
+      console.log('window.ethereum not available - MetaMask not detected');
+      return;
+    }
+
+    // On mobile, only check if we're in MetaMask browser
+    const isMobile = isMobileDevice();
+    if (isMobile && !window.ethereum.isMetaMask) {
+      console.log('Mobile device - not in MetaMask browser');
+      return;
+    }
+
+    // On desktop, check if MetaMask extension is installed
+    if (!isMobile && (!window.ethereum.isMetaMask)) {
+      console.log('MetaMask extension not detected');
       return;
     }
 
@@ -1252,7 +1278,7 @@
 
         // Check network
         const network = await getNetwork();
-        if (network !== BASE_CHAIN_ID) {
+        if (network && network !== BASE_CHAIN_ID) {
           showError('Please switch to Base network');
         }
       } else {
@@ -1260,7 +1286,8 @@
       }
     } catch (error) {
       console.error('Error checking existing connection:', error);
-      showError('Error checking wallet connection: ' + error.message);
+      // Don't show error to user on page load - it's normal if not connected
+      // Only log it for debugging
     }
   }
 
