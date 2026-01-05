@@ -260,15 +260,19 @@
               <p class="text-gray-600 text-sm mb-4 text-center">
                 Open MetaMask app and scan this QR code to connect
               </p>
-              <div id="qr-code-container" class="flex justify-center mb-4 p-4 bg-white rounded-lg border-2 border-gray-200">
+              <div id="qr-code-container" class="flex justify-center mb-4 p-4 bg-white rounded-lg border-2 border-gray-200 min-h-[200px]">
                 <!-- QR code will be generated here -->
               </div>
-              <p class="text-xs text-gray-500 text-center">
-                Or tap the link below to open in MetaMask
+              <p class="text-xs text-gray-500 text-center mb-2">
+                Or tap the button below to open in MetaMask
               </p>
-              <a id="metamask-deep-link" href="#" class="block mt-3 text-center text-purple-600 hover:text-purple-700 font-semibold text-sm">
+              <a id="metamask-deep-link" href="#" class="block mt-3 text-center text-purple-600 hover:text-purple-700 font-semibold text-sm underline">
                 Open in MetaMask App
               </a>
+              <p class="text-xs text-gray-400 text-center mt-3">
+                Or copy this URL and paste it in MetaMask browser:<br>
+                <span id="page-url" class="font-mono text-xs break-all"></span>
+              </p>
             </div>
           </div>
           
@@ -730,54 +734,136 @@
   }
 
   async function showQRCodeModal() {
-    const qrModal = document.getElementById('qr-modal');
-    const qrContainer = document.getElementById('qr-code-container');
-    const deepLink = document.getElementById('metamask-deep-link');
-    
-    // Get current page URL
-    const currentUrl = window.location.href;
-    
-    // Generate QR code
-    qrContainer.innerHTML = ''; // Clear previous QR code
-    QRCode.toCanvas(qrContainer, currentUrl, {
-      width: 256,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
+    console.log('showQRCodeModal called');
+    try {
+      const qrModal = document.getElementById('qr-modal');
+      const qrContainer = document.getElementById('qr-code-container');
+      const deepLink = document.getElementById('metamask-deep-link');
+      
+      if (!qrModal || !qrContainer || !deepLink) {
+        console.error('QR modal elements not found');
+        showError('Unable to show connection options. Please open this page in MetaMask browser.');
+        return;
       }
-    }, function (error) {
-      if (error) {
-        console.error('QR code generation error:', error);
-        qrContainer.innerHTML = '<p class="text-red-500 text-sm">Failed to generate QR code</p>';
+      
+      // Get current page URL
+      const currentUrl = window.location.href;
+      console.log('Current URL for QR code:', currentUrl);
+      
+      // Show URL in the page-url element
+      const pageUrlElement = document.getElementById('page-url');
+      if (pageUrlElement) {
+        pageUrlElement.textContent = currentUrl;
       }
-    });
-    
-    // Set up deep link
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    
-    if (isIOS) {
-      deepLink.href = `metamask://wc?uri=${encodeURIComponent(currentUrl)}`;
-    } else if (isAndroid) {
-      deepLink.href = `metamask://wc?uri=${encodeURIComponent(currentUrl)}`;
-    } else {
-      deepLink.href = currentUrl;
+      
+      // Generate QR code
+      qrContainer.innerHTML = '<p class="text-gray-600 text-sm">Generating QR code...</p>';
+      
+      try {
+        if (typeof QRCode !== 'undefined') {
+          // Try toDataURL first (returns image data URL)
+          QRCode.toDataURL(currentUrl, {
+            width: 256,
+            margin: 2,
+            color: {
+              dark: '#000000',
+              light: '#FFFFFF'
+            }
+          }, function (error, url) {
+            if (error) {
+              console.error('QR code toDataURL error:', error);
+              // Fallback: try toCanvas
+              try {
+                const canvas = document.createElement('canvas');
+                QRCode.toCanvas(canvas, currentUrl, {
+                  width: 256,
+                  margin: 2,
+                  color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                  }
+                }, function (canvasError) {
+                  if (canvasError) {
+                    console.error('QR code toCanvas error:', canvasError);
+                    qrContainer.innerHTML = `
+                      <div class="text-center p-4">
+                        <p class="text-gray-600 text-sm mb-2">QR code unavailable</p>
+                        <p class="text-xs text-gray-500">Use the link below instead</p>
+                      </div>
+                    `;
+                  } else {
+                    qrContainer.innerHTML = '';
+                    qrContainer.appendChild(canvas);
+                  }
+                });
+              } catch (fallbackError) {
+                console.error('QR code fallback error:', fallbackError);
+                qrContainer.innerHTML = `
+                  <div class="text-center p-4">
+                    <p class="text-gray-600 text-sm mb-2">QR code unavailable</p>
+                    <p class="text-xs text-gray-500">Use the link below instead</p>
+                  </div>
+                `;
+              }
+            } else {
+              qrContainer.innerHTML = `<img src="${url}" alt="QR Code" class="mx-auto" style="max-width: 256px; height: auto;" />`;
+            }
+          });
+        } else {
+          console.warn('QRCode library not loaded');
+          qrContainer.innerHTML = `
+            <div class="text-center p-4">
+              <p class="text-gray-600 text-sm mb-2">QR code unavailable</p>
+              <p class="text-xs text-gray-500">Use the link below instead</p>
+            </div>
+          `;
+        }
+      } catch (qrError) {
+        console.error('QR code error:', qrError);
+        qrContainer.innerHTML = `
+          <div class="text-center p-4">
+            <p class="text-gray-600 text-sm mb-2">QR code unavailable</p>
+            <p class="text-xs text-gray-500">Use the link below instead</p>
+          </div>
+        `;
+      }
+      
+      // Set up deep link
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      
+      if (isIOS) {
+        deepLink.href = `metamask://wc?uri=${encodeURIComponent(currentUrl)}`;
+      } else if (isAndroid) {
+        deepLink.href = `metamask://wc?uri=${encodeURIComponent(currentUrl)}`;
+      } else {
+        deepLink.href = currentUrl;
+      }
+      
+      // Show modal - force display
+      qrModal.classList.remove('hidden');
+      qrModal.style.display = 'flex';
+      console.log('QR modal should be visible now');
+      
+      // Close modal handlers
+      const closeBtn = document.getElementById('close-qr-modal');
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          qrModal.classList.add('hidden');
+          qrModal.style.display = 'none';
+        };
+      }
+      
+      qrModal.onclick = (e) => {
+        if (e.target === qrModal) {
+          qrModal.classList.add('hidden');
+          qrModal.style.display = 'none';
+        }
+      };
+    } catch (error) {
+      console.error('Error in showQRCodeModal:', error);
+      showError('Unable to show connection options: ' + error.message);
     }
-    
-    // Show modal
-    qrModal.classList.remove('hidden');
-    
-    // Close modal handlers
-    document.getElementById('close-qr-modal').onclick = () => {
-      qrModal.classList.add('hidden');
-    };
-    
-    qrModal.onclick = (e) => {
-      if (e.target === qrModal) {
-        qrModal.classList.add('hidden');
-      }
-    };
   }
 
   async function connectMetaMask() {
@@ -1060,6 +1146,7 @@
   // ========== Event Handlers ==========
   connectBtn.addEventListener('click', async (e) => {
     e.preventDefault(); // Prevent any default behavior or redirects
+    e.stopPropagation(); // Stop event bubbling
     console.log('Connect button clicked');
     hideError();
     connectBtn.disabled = true;
@@ -1069,9 +1156,12 @@
       // On mobile, try to connect even if provider not detected
       // MetaMask mobile browser will inject the provider
       const isMobile = isMobileDevice();
+      console.log('Is mobile:', isMobile);
+      console.log('window.ethereum available:', typeof window.ethereum !== 'undefined');
+      
       if (isMobile && typeof window.ethereum === 'undefined') {
         // Show helpful message but still try to connect
-        console.log('Mobile device detected, attempting connection...');
+        console.log('Mobile device detected, window.ethereum not available - showing QR modal');
       }
       
       const account = await connectMetaMask();
@@ -1095,15 +1185,28 @@
 
         // Check network
         const network = await getNetwork();
-        if (network !== BASE_CHAIN_ID) {
+        if (network && network !== BASE_CHAIN_ID) {
           showError('Please switch to Base network in MetaMask');
         }
       } else {
-        console.log('Failed to connect account');
+        console.log('Failed to connect account - account is null/undefined');
+        // On mobile, if connection failed and we're not showing QR modal,
+        // make sure to show it
+        if (isMobile && typeof window.ethereum === 'undefined') {
+          console.log('Mobile: window.ethereum still undefined, showing QR modal');
+          showQRCodeModal();
+        }
       }
     } catch (error) {
       console.error('Error in connect button handler:', error);
       showError('Error connecting: ' + error.message);
+      
+      // On mobile, show QR modal as fallback
+      const isMobile = isMobileDevice();
+      if (isMobile && typeof window.ethereum === 'undefined') {
+        console.log('Mobile: Error occurred, showing QR modal as fallback');
+        showQRCodeModal();
+      }
     } finally {
       connectBtn.disabled = false;
       if (!connectedWallet) {

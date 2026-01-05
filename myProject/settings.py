@@ -146,9 +146,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import os
 
+# Stripe Configuration - Load from environment variables (loaded via dotenv at top of file)
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+
+# Validate that Stripe keys are set
+if not STRIPE_SECRET_KEY:
+    import warnings
+    warnings.warn(
+        "STRIPE_SECRET_KEY is not set in environment variables. "
+        "Please add it to your .env file: STRIPE_SECRET_KEY=sk_test_... or STRIPE_SECRET_KEY=sk_live_..."
+    )
 DOMAIN = os.environ.get("DOMAIN", "http://localhost:8000")
 
 # Base Network / USDC Configuration

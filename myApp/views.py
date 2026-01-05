@@ -16,7 +16,13 @@ import stripe
 def home(request):
     return render(request, "home.html")
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# Set Stripe API key from settings
+if settings.STRIPE_SECRET_KEY:
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+else:
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.error("STRIPE_SECRET_KEY is not set in environment variables. Please set it in .env file.")
 
 def _usd_cents(amount_str: str) -> int:
     try:
@@ -177,12 +183,89 @@ def stripe_webhook(request):
 
     # Handle core events (expand as needed)
     etype = event.get("type")
+    import logging
+    logger = logging.getLogger(__name__)
+    
     if etype == "checkout.session.completed":
-        # session = event["data"]["object"]
-        pass
+        session = event["data"]["object"]
+        
+        # Stripe Checkout automatically sends receipts when customer_email is set
+        # This webhook handler ensures receipts are sent programmatically as a backup
+        try:
+            customer_email = session.get("customer_email") or session.get("customer_details", {}).get("email")
+            
+            if customer_email:
+                # For one-time payments, ensure receipt is sent
+                if session.get("mode") == "payment":
+                    payment_intent_id = session.get("payment_intent")
+                    if payment_intent_id:
+                        try:
+                            # Stripe automatically sends receipts for Checkout sessions with customer_email
+                            # But we can also explicitly trigger it via PaymentIntent
+                            payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+                            
+                            # If receipt hasn't been sent, send it
+                            # Note: Stripe Checkout should send this automatically, but this is a backup
+                            if not payment_intent.get("receipt_email"):
+                                # Update payment intent with receipt email to trigger receipt
+                                stripe.PaymentIntent.modify(
+                                    payment_intent_id,
+                                    receipt_email=customer_email
+                                )
+                                logger.info(f"Receipt email configured for {customer_email} (payment {payment_intent_id})")
+                            else:
+                                logger.info(f"Receipt already configured for payment {payment_intent_id}")
+                        except Exception as pi_error:
+                            logger.warning(f"Could not configure receipt email: {pi_error}. Stripe Checkout should send automatic receipt.")
+                            # Stripe Checkout will send receipt automatically if enabled in dashboard
+                
+                # For subscriptions, Stripe automatically sends invoice emails
+                elif session.get("mode") == "subscription":
+                    subscription_id = session.get("subscription")
+                    if subscription_id:
+                        try:
+                            subscription = stripe.Subscription.retrieve(subscription_id)
+                            if subscription.get("latest_invoice"):
+                                invoice_id = subscription.latest_invoice
+                                invoice = stripe.Invoice.retrieve(invoice_id)
+                                # Send invoice if it's paid and hasn't been sent
+                                if invoice.status == "paid":
+                                    try:
+                                        stripe.Invoice.send_invoice(invoice_id)
+                                        logger.info(f"Invoice receipt sent to {customer_email} for subscription {subscription_id}")
+                                    except stripe.error.InvalidRequestError as e:
+                                        # Invoice may already be sent
+                                        if "already been sent" not in str(e).lower() and "has already been finalized" not in str(e).lower():
+                                            logger.warning(f"Invoice send error: {e}")
+                                        else:
+                                            logger.info(f"Invoice already sent for subscription {subscription_id}")
+                        except Exception as sub_error:
+                            logger.warning(f"Could not send subscription invoice: {sub_error}")
+        except Exception as email_error:
+            logger.error(f"Error processing receipt email: {email_error}")
+            # Don't fail the webhook if email sending fails
+    
     elif etype == "invoice.paid":
-        pass
+        # For recurring donations, ensure receipt is sent when invoice is paid
+        invoice = event["data"]["object"]
+        try:
+            customer_email = invoice.get("customer_email")
+            if customer_email:
+                # Try to send invoice if not already sent
+                try:
+                    stripe.Invoice.send_invoice(invoice["id"])
+                    logger.info(f"Invoice receipt sent to {customer_email} for invoice {invoice['id']}")
+                except stripe.error.InvalidRequestError as e:
+                    # Invoice may already be sent, which is fine
+                    if "already been sent" not in str(e).lower() and "has already been finalized" not in str(e).lower():
+                        logger.warning(f"Could not send invoice receipt: {e}")
+                    else:
+                        logger.info(f"Invoice already sent for invoice {invoice['id']}")
+        except Exception as inv_error:
+            logger.warning(f"Error processing invoice receipt: {inv_error}")
+    
     elif etype == "invoice.payment_failed":
+        # Optionally send notification for failed payments
         pass
 
     return HttpResponse(status=200)
